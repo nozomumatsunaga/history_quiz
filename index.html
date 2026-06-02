@@ -7,86 +7,86 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="歴史クイズ">
-<meta name="theme-color" content="#fff7f2">
+<meta name="theme-color" content="#fffaf5">
 <style>
 :root {
-  --bg:#fff7f2; --bg2:#fffdf9; --card:#ffffff; --text:#1e2430; --muted:#737986;
-  --accent:#d32f50; --accent2:#ff8a3d; --ok:#16a66a; --ng:#596070;
-  --line:rgba(30,36,48,.12); --shadow:0 18px 50px rgba(42,31,25,.13);
+  --bg:#fff9f3; --paper:#fffdf9; --card:#ffffff; --text:#20242c; --muted:#8a909a;
+  --accent:#d32f50; --accent2:#ff7a35; --soft:#fff0e6; --ok:#17a66a; --ng:#68717f;
+  --line:rgba(32,36,44,.10); --shadow:0 14px 40px rgba(55,38,22,.10);
 }
 * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html,body { margin:0; width:100%; height:100%; overflow:hidden; font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif; color:var(--text); background:linear-gradient(135deg,var(--bg),#fff 52%,#fff0e6); }
+html,body { margin:0; width:100%; height:100%; overflow:hidden; font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif; color:var(--text); background:radial-gradient(circle at 8% 8%,#fff 0,#fff8ef 45%,#fff 100%); }
 body { user-select:none; }
 .app { width:100vw; height:100dvh; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); display:flex; align-items:center; justify-content:center; }
-.wrap { width:min(1240px,100vw); height:min(660px,100dvh); padding:16px 18px; display:grid; grid-template-rows:auto 1fr auto; gap:10px; }
-.top { display:flex; align-items:center; justify-content:space-between; min-height:42px; }
-.brand { display:flex; align-items:center; gap:12px; font-weight:900; letter-spacing:.05em; font-size:20px; }
-.badge { width:36px; height:36px; border-radius:12px; display:grid; place-items:center; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white; box-shadow:0 8px 18px rgba(211,47,80,.24); }
-.counter { font-size:22px; font-weight:900; letter-spacing:.08em; color:var(--accent); }
-.controls { display:flex; gap:8px; align-items:center; }
-.iconbtn { border:1px solid var(--line); background:rgba(255,255,255,.76); color:var(--text); border-radius:999px; height:38px; min-width:38px; padding:0 13px; font-size:14px; font-weight:800; box-shadow:0 5px 16px rgba(0,0,0,.05); }
-.main { display:grid; grid-template-columns:minmax(0,1fr) 230px; gap:12px; min-height:0; }
-.card { background:rgba(255,255,255,.86); border:1px solid var(--line); border-radius:28px; box-shadow:var(--shadow); overflow:hidden; position:relative; }
-.study { padding:28px 56px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; }
-.label { color:var(--accent); font-weight:900; letter-spacing:.16em; font-size:18px; margin-bottom:18px; }
-.mainText { width:100%; font-weight:900; letter-spacing:.01em; line-height:1.22; text-wrap:balance; overflow:hidden; display:flex; align-items:center; justify-content:center; white-space:normal; word-break:keep-all; overflow-wrap:normal; min-height:220px; }
-.questionText { font-size:clamp(28px, 4.2vw, 52px); }
-.answerText { font-size:clamp(42px, 6.4vw, 76px); }
-.sub { margin-top:12px; color:var(--muted); font-size:19px; font-weight:800; min-height:26px; }
-.speaker { margin-top:18px; color:var(--muted); font-weight:700; font-size:16px; }
-.hint { margin-top:20px; color:var(--muted); font-weight:800; font-size:16px; }
-.side { padding:18px; display:flex; flex-direction:column; justify-content:center; gap:12px; }
-.bigbtn { width:100%; border:0; border-radius:22px; padding:17px 12px; font-weight:900; font-size:19px; background:#fff; color:var(--text); box-shadow:0 8px 22px rgba(0,0,0,.07); border:1px solid var(--line); }
-.bigbtn .mark { display:block; font-size:40px; line-height:1; margin-bottom:4px; }
-.bigbtn.ok { color:var(--ok); }
-.bigbtn.ng { color:var(--ng); }
-.nextbtn { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white; }
-.stats { color:var(--muted); font-weight:800; font-size:14px; line-height:1.7; text-align:center; }
-.bottom { display:grid; grid-template-columns:1fr auto; align-items:center; gap:18px; }
-.progress { height:12px; background:rgba(30,36,48,.1); border-radius:999px; overflow:hidden; }
+.wrap { width:min(1270px,100vw); height:min(665px,100dvh); padding:12px 18px 14px; display:grid; grid-template-rows:38px 1fr 28px; gap:10px; }
+.top { display:grid; grid-template-columns:46px 1fr auto auto; gap:14px; align-items:center; }
+.brand { display:flex; align-items:center; gap:10px; font-weight:900; letter-spacing:.04em; font-size:18px; color:#222832; }
+.badge { width:31px; height:31px; border-radius:10px; display:grid; place-items:center; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white; box-shadow:0 7px 16px rgba(211,47,80,.22); font-size:16px; }
+.counter { font-size:22px; font-weight:950; letter-spacing:.08em; color:var(--accent); min-width:160px; text-align:right; }
+.iconbtn { border:1px solid var(--line); background:rgba(255,255,255,.72); color:var(--text); border-radius:999px; height:34px; min-width:34px; padding:0 12px; font-size:13px; font-weight:850; box-shadow:0 5px 14px rgba(0,0,0,.035); }
+.main { display:grid; grid-template-columns:minmax(0,1fr) 116px; gap:12px; min-height:0; }
+.card { background:rgba(255,255,255,.88); border:1px solid var(--line); border-radius:26px; box-shadow:var(--shadow); overflow:hidden; position:relative; }
+.study { padding:26px clamp(38px,5vw,78px); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; }
+.label { color:var(--accent); font-weight:950; letter-spacing:.2em; font-size:16px; margin-bottom:18px; }
+.mainText { width:100%; font-weight:950; letter-spacing:.015em; line-height:1.42; text-wrap:balance; overflow:hidden; display:flex; align-items:center; justify-content:center; white-space:normal; word-break:keep-all; overflow-wrap:normal; min-height:240px; max-height:300px; padding:0 6px; }
+.questionText { font-size:clamp(33px, 4.7vw, 62px); }
+.answerText { font-size:clamp(44px, 6.8vw, 82px); line-height:1.22; }
+.sub { margin-top:8px; color:var(--muted); font-size:18px; font-weight:850; min-height:24px; max-height:56px; overflow:hidden; }
+.speaker { margin-top:12px; color:var(--muted); font-weight:800; font-size:13px; min-height:18px; }
+.hint { margin-top:10px; color:var(--muted); font-weight:850; font-size:13px; min-height:18px; }
+.rail { padding:10px 9px; display:flex; flex-direction:column; gap:8px; align-items:stretch; justify-content:center; background:rgba(255,255,255,.7); }
+.action { border:0; border-radius:18px; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white; font-weight:950; min-height:68px; font-size:15px; box-shadow:0 10px 24px rgba(211,47,80,.18); }
+.gradeBtn { border:1px solid var(--line); border-radius:18px; background:white; min-height:68px; font-weight:950; font-size:14px; color:var(--text); box-shadow:0 7px 18px rgba(0,0,0,.045); }
+.gradeBtn .mark { display:block; font-size:30px; line-height:1; margin-bottom:2px; }
+.gradeBtn.ok .mark { color:var(--ok); } .gradeBtn.ng .mark { color:var(--ng); }
+.microStats { color:var(--muted); font-weight:850; font-size:10px; line-height:1.5; text-align:center; margin-top:2px; }
+.bottom { display:grid; grid-template-columns:1fr auto; align-items:center; gap:14px; }
+.progress { height:10px; background:rgba(32,36,44,.08); border-radius:999px; overflow:hidden; }
 .fill { height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:999px; transition:.25s; }
-.mode { display:flex; gap:8px; }
-.pill { border:1px solid var(--line); border-radius:999px; background:rgba(255,255,255,.75); padding:10px 13px; font-weight:900; color:var(--muted); }
-.pill.active { color:white; background:var(--accent); border-color:transparent; }
-.menu { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(255,247,242,.82); backdrop-filter:blur(16px); z-index:10; }
+.mode { display:flex; gap:7px; }
+.pill { border:1px solid var(--line); border-radius:999px; background:rgba(255,255,255,.78); padding:8px 12px; font-weight:950; font-size:12px; color:var(--muted); }
+.pill.active { color:white; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-color:transparent; }
+.menu { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(255,250,245,.82); backdrop-filter:blur(16px); z-index:10; }
 .menu.show { display:flex; }
 .menuPanel { width:min(560px,92vw); background:white; border-radius:30px; padding:26px; box-shadow:var(--shadow); border:1px solid var(--line); }
 .menuPanel h2 { margin:0 0 16px; }
 .menuItem { width:100%; text-align:left; border:1px solid var(--line); background:#fff; padding:18px; border-radius:18px; margin:9px 0; font-size:17px; font-weight:900; }
-.toast { position:fixed; left:50%; bottom:20px; transform:translateX(-50%); background:rgba(30,36,48,.92); color:white; padding:10px 16px; border-radius:999px; font-weight:800; display:none; z-index:20; }
+.toast { position:fixed; left:50%; bottom:18px; transform:translateX(-50%); background:rgba(32,36,44,.88); color:white; padding:10px 16px; border-radius:999px; font-weight:850; display:none; z-index:20; }
 .portrait { display:none; position:fixed; inset:0; z-index:99; align-items:center; justify-content:center; text-align:center; padding:30px; background:var(--bg); color:var(--text); font-weight:900; font-size:24px; line-height:1.6; }
 @media (orientation: portrait) { .portrait { display:flex; } }
 @media (max-width:760px) and (orientation:landscape) {
-  .wrap { padding:8px 12px; gap:8px; height:100dvh; } .top { min-height:32px; } .brand { font-size:15px; } .badge { width:28px;height:28px;border-radius:10px; } .counter { font-size:17px; }
-  .main { grid-template-columns:minmax(0,1fr) 156px; gap:8px; } .study { padding:14px 28px; border-radius:22px; } .card { border-radius:22px; } .label { font-size:13px; margin-bottom:6px; }
-  .mainText { min-height:134px; line-height:1.18; } .questionText { font-size:clamp(22px,4.4vw,36px); } .answerText { font-size:clamp(30px,6.2vw,54px); } .sub { font-size:14px; margin-top:5px; } .speaker,.hint { font-size:12px; margin-top:8px; }
-  .side { padding:10px; gap:7px; } .bigbtn { border-radius:17px; padding:10px 8px; font-size:14px; } .bigbtn .mark { font-size:28px; } .stats { font-size:11px; } .bottom { gap:10px; } .progress { height:8px; } .pill { padding:8px 10px; font-size:12px; } .iconbtn { height:32px; min-width:32px; }
+  .wrap { padding:8px 12px 10px; gap:7px; height:100dvh; grid-template-rows:30px 1fr 22px; }
+  .top { grid-template-columns:34px 1fr auto auto; gap:8px; } .brand { font-size:14px; gap:7px; } .badge { width:25px;height:25px;border-radius:8px;font-size:13px; } .counter { font-size:17px; min-width:112px; } .iconbtn { height:28px; min-width:28px; padding:0 9px; font-size:11px; }
+  .main { grid-template-columns:minmax(0,1fr) 82px; gap:8px; } .card { border-radius:20px; } .study { padding:13px 34px; } .label { font-size:11px; margin-bottom:6px; }
+  .mainText { min-height:128px; max-height:168px; line-height:1.38; padding:0 4px; } .questionText { font-size:clamp(25px,4.6vw,39px); } .answerText { font-size:clamp(35px,6.2vw,58px); line-height:1.2; } .sub { font-size:12px; margin-top:4px; min-height:14px; max-height:32px; } .speaker,.hint { font-size:10px; margin-top:4px; min-height:12px; }
+  .rail { padding:7px 6px; gap:6px; } .action { min-height:54px; border-radius:15px; font-size:12px; } .gradeBtn { min-height:50px; border-radius:15px; font-size:11px; } .gradeBtn .mark { font-size:22px; } .microStats { font-size:8px; line-height:1.35; }
+  .progress { height:7px; } .bottom { gap:8px; } .pill { padding:6px 8px; font-size:10px; }
 }
 </style>
 </head>
 <body>
-<div class="portrait">iPhoneを横向きにしてください<br><span style="font-size:15px;color:#737986">横表示で文字が見やすくなります</span></div>
+<div class="portrait">iPhoneを横向きにしてください<br><span style="font-size:15px;color:#8a909a">横表示で文字が見やすくなります</span></div>
 <div class="app">
   <div class="wrap">
     <div class="top">
       <button class="iconbtn" onclick="toggleMenu()">☰</button>
       <div class="brand"><span class="badge">歴</span><span>歴史一問一答</span></div>
       <div class="counter"><span id="qid"></span> / <span id="total"></span></div>
-      <div class="controls"><button class="iconbtn" onclick="toggleSound()" id="soundBtn">♪ ON</button></div>
+      <button class="iconbtn" onclick="toggleSound()" id="soundBtn">♪ OFF</button>
     </div>
     <div class="main">
       <section class="card study" onclick="tapMain()">
         <div class="label" id="label">問題</div>
         <div id="mainText" class="mainText questionText"></div>
         <div class="sub" id="subText"></div>
-        <div class="speaker" id="speaker">読み上げ中...</div>
+        <div class="speaker" id="speaker"></div>
         <div class="hint" id="hint">タップで答えを表示</div>
       </section>
-      <aside class="card side" id="side">
-        <button class="bigbtn nextbtn" id="showAnswerBtn" onclick="showAnswer(event)">答えを見る</button>
-        <button class="bigbtn ok" id="okBtn" onclick="grade(true)" style="display:none"><span class="mark">○</span>正解</button>
-        <button class="bigbtn ng" id="ngBtn" onclick="grade(false)" style="display:none"><span class="mark">×</span>不正解</button>
-        <div class="stats" id="stats"></div>
+      <aside class="card rail" id="side">
+        <button class="action" id="showAnswerBtn" onclick="showAnswer(event)">答え</button>
+        <button class="gradeBtn ok" id="okBtn" onclick="grade(true)" style="display:none"><span class="mark">○</span>正解</button>
+        <button class="gradeBtn ng" id="ngBtn" onclick="grade(false)" style="display:none"><span class="mark">×</span>不正解</button>
+        <div class="microStats" id="stats"></div>
       </aside>
     </div>
     <div class="bottom">
@@ -99,20 +99,20 @@ body { user-select:none; }
 <div class="toast" id="toast"></div>
 <script>
 const QUESTIONS = [{"id": "506", "question": "黒船を率いて、1853年に浦賀へ来航し、開国をせまったアメリカ人はだれですか。", "answer": "ペリー"}, {"id": "507", "question": "ペリーと江戸幕府の間で、1854年に結ばれた条約を何といいますか。", "answer": "日米和親条約"}, {"id": "508", "question": "日米和親条約によって開かれた港を2つ答えなさい。", "answer": "下田・函館"}, {"id": "509", "question": "アメリカが、日本に開国を迫った理由を二つ挙げなさい", "answer": "捕鯨のための基地を得ること。中国との貿易の中継地とするため。"}, {"id": "510", "question": "日本とアメリカの間で貿易が始まることになった、1858年に結ばれた条約を何といいますか。", "answer": "日米修好通商条約"}, {"id": "511", "question": "日米修好通商条約が、日本にとって不利な条約とされたのはなぜですか。", "answer": "領事裁判権（治外法権）を認めていたから"}, {"id": "512", "question": "日米修好通商条約が、日本にとって不平等な条約と言われたもう一つの理由は何ですか。", "answer": "関税自主権がなかったこと"}, {"id": "513", "question": "日米修好通商条約によって開港した港を5つ答えなさい。", "answer": "函館・横浜・新潟・神戸・長崎"}, {"id": "514", "question": "江戸時代の終わりごろ、日本最大の貿易額をあげていた港はどこですか。", "answer": "横浜"}, {"id": "515", "question": "江戸時代末期の日本の主な輸出品を2つ答えなさい。", "answer": "生糸・茶"}, {"id": "516", "question": "日米修好通商条約締結後、外国人を追放しようとする運動を何といいますか。", "answer": "攘夷運動"}, {"id": "517", "question": "攘夷運動が起こったきっかけは何ですか？", "answer": "国内の品不足による物価上昇"}, {"id": "518", "question": "攘夷運動と、天皇中心の国を理想とする尊王思想が結びついた運動を何といいますか。", "answer": "尊王攘夷運動"}, {"id": "519", "question": "彦根藩出身で、朝廷の許可を得ずに日米修好通商条約を結んだ大老はだれですか。", "answer": "井伊直弼"}, {"id": "520", "question": "井伊直弼が1858年から行った、条約反対派を処罰する政策を何といいますか。", "answer": "安政のたい獄"}, {"id": "521", "question": "安政の大獄で処刑された、松下村塾を開いていた長州藩出身の人物はだれですか。", "answer": "吉田松陰"}, {"id": "522", "question": "井伊直弼が暗殺された、1860年の事件を何といいますか。", "answer": "桜田門外の変"}, {"id": "523", "question": "江戸時代末に、倒幕運動の中心となった九州地方の藩はどこですか。", "answer": "薩摩藩"}, {"id": "524", "question": "江戸時代末に、倒幕運動の中心となった中国地方の藩はどこですか。", "answer": "長州藩"}, {"id": "525", "question": "長州藩で奇兵隊を組織し、藩の改革を進めた人物はだれですか。", "answer": "高杉晋作"}, {"id": "526", "question": "現在の横浜市付近で、薩摩藩士がイギリス人を殺傷し、その後の対立のきっかけとなった事件を何といいますか。", "answer": "生麦事件"}, {"id": "527", "question": "生麦事件 をきっかけに、1863年にイギリス と 薩摩藩 の間で起こった戦争を何といいますか。", "answer": "薩英戦争"}, {"id": "528", "question": "薩摩藩と長州藩の間で結ばれた、1866年の同盟を何といいますか。", "answer": "薩長同盟"}, {"id": "529", "question": "薩長同盟の成立に力を尽くした土佐藩出身の人物はだれですか。", "answer": "坂本龍馬"}, {"id": "530", "question": "坂本龍馬の師にあたり、幕府の海軍で活躍した人物はだれですか。", "answer": "勝海舟"}, {"id": "531", "question": "江戸幕府の15代将軍はだれですか。", "answer": "徳川慶喜"}, {"id": "532", "question": "徳川慶喜が1867年に政権を朝廷へ返上したことを何といいますか。", "answer": "大政奉還"}];
-let order = QUESTIONS.map((_,i)=>i), pos=0, state='q', sound=true, mode='normal';
-const KEY='history_quiz_stats_v2';
+let order = QUESTIONS.map((_,i)=>i), pos=0, state='q', sound=false, mode='normal';
+const KEY='history_quiz_stats_v3';
 let stats = JSON.parse(localStorage.getItem(KEY)||'{}');
 function $(id){return document.getElementById(id)}
 function save(){localStorage.setItem(KEY, JSON.stringify(stats));}
 function current(){return QUESTIONS[order[pos]];}
 function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function naturalBreak(s){return s.replace(/、/g,'、​').replace(/。/g,'。​').replace(/（/g,'​（').replace(/・/g,'・​');}
-function speak(txt){ speechSynthesis.cancel(); if(!sound){$('speaker').textContent='読み上げOFF';return;} const u=new SpeechSynthesisUtterance(txt); u.lang='ja-JP'; u.rate=1.05; u.pitch=1; $('speaker').textContent='読み上げ中...'; u.onend=()=>{$('speaker').textContent='';}; speechSynthesis.speak(u); }
-function fitText(){ const el=$('mainText'); el.style.fontSize=''; let max= state==='a'?68:48; if(innerWidth<760) max= state==='a'?54:38; let min=22; let size=max; el.style.fontSize=size+'px'; let guard=0; while((el.scrollHeight>el.clientHeight || el.scrollWidth>el.clientWidth) && size>min && guard++<40){ size-=2; el.style.fontSize=size+'px'; } }
+function naturalBreak(s){return String(s).replace(/、/g,'、&#8203;').replace(/。/g,'。&#8203;').replace(/（/g,'&#8203;（').replace(/・/g,'・&#8203;');}
+function speak(txt){ speechSynthesis.cancel(); if(!sound){$('speaker').textContent='';return;} const u=new SpeechSynthesisUtterance(txt); u.lang='ja-JP'; u.rate=1.03; u.pitch=1; $('speaker').textContent='読み上げ中...'; u.onend=()=>{$('speaker').textContent='';}; speechSynthesis.speak(u); }
+function fitText(){ const el=$('mainText'); let isA=state==='a'; let vw=innerWidth; let max=isA?80:58; if(vw<760) max=isA?58:40; let min=isA?28:22; let size=max; el.style.fontSize=size+'px'; let guard=0; while((el.scrollHeight>el.clientHeight || el.scrollWidth>el.clientWidth) && size>min && guard++<60){ size-=1; el.style.fontSize=size+'px'; } }
 function render(){ const q=current(); $('qid').textContent=q.id; $('total').textContent=String(QUESTIONS.length).padStart(4,'0'); $('fill').style.width=((pos+1)/order.length*100)+'%';
- const st=stats[q.id]||{ok:0,ng:0}; $('stats').innerHTML=`この問題<br>正解 ${st.ok}回 / 不正解 ${st.ng}回<br>${pos+1} / ${order.length}問`;
+ const st=stats[q.id]||{ok:0,ng:0}; $('stats').innerHTML=`正${st.ok} / 誤${st.ng}<br>${pos+1}/${order.length}`;
  if(state==='q'){ $('label').textContent='問題'; $('mainText').className='mainText questionText'; $('mainText').innerHTML=naturalBreak(q.question); $('subText').textContent=''; $('hint').textContent='タップで答えを表示'; $('showAnswerBtn').style.display='block'; $('okBtn').style.display='none'; $('ngBtn').style.display='none'; setTimeout(fitText,0); speak(q.question); }
- else { $('label').textContent='答え'; $('mainText').className='mainText answerText'; $('mainText').innerHTML=naturalBreak(q.answer); $('subText').textContent = q.answer.length<8 ? q.question : ''; $('hint').textContent='正解 / 不正解を選んで次へ'; $('showAnswerBtn').style.display='none'; $('okBtn').style.display='block'; $('ngBtn').style.display='block'; setTimeout(fitText,0); speak(q.answer); }
+ else { $('label').textContent='答え'; $('mainText').className='mainText answerText'; $('mainText').innerHTML=naturalBreak(q.answer); $('subText').textContent = ''; $('hint').textContent='正解 / 不正解を選んで次へ'; $('showAnswerBtn').style.display='none'; $('okBtn').style.display='block'; $('ngBtn').style.display='block'; setTimeout(fitText,0); speak(q.answer); }
 }
 function tapMain(){ if(state==='q') showAnswer(); }
 function showAnswer(e){ if(e) e.stopPropagation(); state='a'; render(); }
