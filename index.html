@@ -70,14 +70,14 @@ body.previewMode .label{color:#7aa5d8;}
 .menuSub{font-size:13px;color:var(--muted);font-weight:800;margin-top:2px;}
 .closeMenu{border:1px solid var(--line);background:#fff;border-radius:999px;min-width:96px;height:42px;font-weight:900;color:#5d5650;}
 .chapterGrid{min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:2px 2px 16px;}
-.chapterCard{border:1px solid var(--line);background:var(--card);border-radius:20px;padding:13px 14px;text-align:left;box-shadow:0 7px 18px rgba(40,30,20,.07);min-height:98px;display:flex;flex-direction:column;justify-content:space-between;}
+.chapterCard{border:1px solid var(--line);background:var(--card);border-radius:20px;padding:13px 14px;text-align:left;box-shadow:0 7px 18px rgba(40,30,20,.07);min-height:98px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;-webkit-tap-highlight-color:rgba(211,47,80,.12);touch-action:manipulation;}
 .chapterCard:active{transform:translateY(1px);}
 .chapterCard.active{border-color:rgba(211,47,80,.35);box-shadow:0 0 0 2px rgba(211,47,80,.09) inset,0 7px 18px rgba(40,30,20,.07);}
 .chapterName{font-size:clamp(15px,1.7vw,18px);font-weight:950;color:#2d2925;line-height:1.25;letter-spacing:.02em;}
-.chapterRange{font-size:11px;color:var(--muted);font-weight:800;margin-top:4px;}
-.chapterMeta{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;font-weight:900;color:#736b62;margin-top:8px;}
-.chapterCount{color:var(--accent);}
-.chapterLast{white-space:nowrap;color:#8f867d;}
+.chapterRange{font-size:12px;color:var(--muted);font-weight:850;margin-top:6px;}
+.chapterMeta{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px;font-weight:950;color:#736b62;margin-top:10px;}
+.chapterCount{color:var(--accent);font-size:19px;letter-spacing:.02em;}
+.chapterLast{white-space:nowrap;color:#8f867d;font-size:15px;font-weight:950;}
 @media (max-height:430px) and (orientation:landscape){.chapterGrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.chapterCard{min-height:84px;padding:10px 12px;border-radius:17px}.chapterName{font-size:14px}.chapterRange,.chapterMeta{font-size:10px}.menuTitle{font-size:22px}.closeMenu{height:36px}}
 
 @media (orientation:portrait){#portraitGuard{display:flex;} .app{display:none;}}
@@ -174,7 +174,20 @@ if(current < CHAPTERS[activeChapter].startIndex || current > CHAPTERS[activeChap
 function findChapterIndexByQuestion(index){ return CHAPTERS.findIndex(ch => index>=ch.startIndex && index<=ch.endIndex); }
 function activeCh(){ return CHAPTERS[activeChapter]; }
 function formatDate(d=new Date()){ return `${d.getMonth()+1}/${d.getDate()}`; }
-function saveChapterState(){ localStorage.setItem(chapterKey,String(activeChapter)); saveChapterState(); }
+function todayISO(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function daysAgoLabel(iso){
+  if(!iso) return '未学習';
+  const m=String(iso).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(!m){ return `最終 ${escapeHtml(iso)}`; }
+  const then=new Date(Number(m[1]), Number(m[2])-1, Number(m[3]));
+  const now=new Date();
+  const today=new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diff=Math.max(0, Math.round((today-then)/86400000));
+  if(diff===0) return '今日';
+  if(diff===1) return '1日前';
+  return `${diff}日前`;
+}
+function saveChapterState(){ localStorage.setItem(chapterKey,String(activeChapter)); localStorage.setItem(progressKey,String(current)); }
 function saveChapterStats(){ localStorage.setItem(chapterStatsKey, JSON.stringify(chapterStats)); }
 
 const protectedTerms = [
@@ -256,7 +269,7 @@ function completeChapter(){
   const ch=activeCh();
   const rec=chapterStats[ch.id] || {count:0,last:''};
   rec.count=Number(rec.count||0)+1;
-  rec.last=formatDate();
+  rec.last=todayISO();
   chapterStats[ch.id]=rec;
   saveChapterStats();
   current=ch.startIndex; showingAnswer=false; previewingQuestion=false; render();
@@ -275,18 +288,18 @@ function renderChapterMenu(){
   grid.innerHTML=CHAPTERS.map((ch,i)=>{
     const rec=chapterStats[ch.id] || {count:0,last:''};
     const active=i===activeChapter ? ' active' : '';
-    return `<button class="chapterCard${active}" data-chapter="${i}">
-      <div><div class="chapterName">${escapeHtml(ch.title)}</div><div class="chapterRange">問題${ch.startId}〜${ch.endId} ／ ${ch.count}問</div></div>
-      <div class="chapterMeta"><span class="chapterCount">学習 ${Number(rec.count||0)}回</span><span class="chapterLast">最終 ${rec.last ? escapeHtml(rec.last) : '—'}</span></div>
+    return `<button type="button" class="chapterCard${active}" data-chapter="${i}">
+      <div><div class="chapterName">${escapeHtml(ch.title)}</div><div class="chapterRange">問題${ch.startId}〜${ch.endId}</div></div>
+      <div class="chapterMeta"><span class="chapterCount">学習 ${Number(rec.count||0)}回</span><span class="chapterLast">${daysAgoLabel(rec.last)}</span></div>
     </button>`;
   }).join('');
-  grid.querySelectorAll('.chapterCard').forEach(btn=>btn.addEventListener('click',()=>selectChapter(Number(btn.dataset.chapter))));
 }
 function openChapterMenu(){ renderChapterMenu(); $('chapterMenu').classList.add('show'); $('chapterMenu').setAttribute('aria-hidden','false'); }
 function closeChapterMenu(){ $('chapterMenu').classList.remove('show'); $('chapterMenu').setAttribute('aria-hidden','true'); }
 function selectChapter(i){ activeChapter=i; current=CHAPTERS[i].startIndex; showingAnswer=false; previewingQuestion=false; saveChapterState(); closeChapterMenu(); render({speak:true}); }
 $('menuBtn').addEventListener('click',openChapterMenu);
 $('closeMenuBtn').addEventListener('click',closeChapterMenu);
+$('chapterGrid').addEventListener('click',(e)=>{ const btn=e.target.closest('.chapterCard'); if(btn) selectChapter(Number(btn.dataset.chapter)); });
 $('chapterMenu').addEventListener('click',(e)=>{ if(e.target.id==='chapterMenu') closeChapterMenu(); });
 const hold=$('holdQuestionBtn');
 function startPreview(e){ if(!showingAnswer)return; previewingQuestion=true; render(); e.preventDefault(); }
