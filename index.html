@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="歴史一問一答">
-<title>歴史一問一答 Ver12.6</title>
+<title>歴史一問一答 Ver12.6.1</title>
 <style>
 :root {
   --accent:#d32f50;
@@ -60,10 +60,10 @@ button{font-family:inherit;touch-action:manipulation;}
 .rateBox{border-radius:18px;background:#fff;border:1px solid var(--line);padding:9px 6px 10px;}
 .rateLabel{font-size:12px;font-weight:950;color:#8a8178;letter-spacing:.08em;margin-bottom:2px;}
 .rateValue{font-size:clamp(28px,3.8vw,38px);font-weight:1000;line-height:1;letter-spacing:.01em;color:#486a9a;}
-.rateValue.rate-gold{color:#c99622;}
-.rateValue.rate-navy{color:#486a9a;}
-.rateValue.rate-green{color:#3f8f74;}
-.rateValue.rate-cool{color:#7890aa;}
+.rateValue.rate-red{color:#d33a50;}
+.rateValue.rate-gold{color:#d4a93a;}
+.rateValue.rate-green{color:#5fa56b;}
+.rateValue.rate-cool{color:#8a97a8;}
 .rateValue.rate-none{color:#a49b92;}
 .smallRow{display:flex;gap:8px;}
 .navBtn{flex:1;border:1px solid var(--line);background:#fff;border-radius:16px;min-height:40px;font-weight:900;color:#5d5650;}
@@ -88,7 +88,12 @@ body.previewMode .label{color:#7aa5d8;}
 .chapterName{font-size:clamp(15px,1.7vw,18px);font-weight:950;color:#2d2925;line-height:1.25;letter-spacing:.02em;}
 .chapterRange{font-size:12px;color:var(--muted);font-weight:850;margin-top:6px;}
 .chapterMeta{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px;font-weight:950;color:#736b62;margin-top:10px;}
-.chapterCount{color:var(--accent);font-size:20px;letter-spacing:.01em;white-space:nowrap;min-width:5.5em;}
+.chapterCount{font-size:20px;letter-spacing:.01em;white-space:nowrap;min-width:5.5em;font-weight:1000;}
+.chapterCount.count-zero{color:#a49b92;}
+.chapterCount.count-low{color:#8a97a8;}
+.chapterCount.count-mid{color:#5fa56b;}
+.chapterCount.count-high{color:#d4a93a;}
+.chapterCount.count-master{color:#d33a50;}
 .chapterLast{white-space:nowrap;color:#8f867d;font-size:15px;font-weight:950;}
 .confirmOverlay{position:fixed;inset:0;background:rgba(35,30,25,.28);backdrop-filter:blur(8px);z-index:130;display:none;align-items:center;justify-content:center;padding:24px;}
 .confirmOverlay.show{display:flex;}
@@ -352,8 +357,8 @@ function updateStatsLine(){
   }
   const rate = Math.round(ok / answered * 100);
   el.textContent = `${rate}%`;
-  if(rate===100) el.classList.add('rate-gold');
-  else if(rate>=75) el.classList.add('rate-navy');
+  if(rate===100) el.classList.add('rate-red');
+  else if(rate>=75) el.classList.add('rate-gold');
   else if(rate>=50) el.classList.add('rate-green');
   else el.classList.add('rate-cool');
 }
@@ -432,6 +437,14 @@ $('correctBtn').addEventListener('click',()=>{const id=QUESTIONS[current].id; co
 $('wrongBtn').addEventListener('click',()=>{const id=QUESTIONS[current].id; const s=stats[id]||{ok:0,ng:0}; s.ok=Number(s.ok||0); s.ng=Number(s.ng||0)+1; stats[id]=s; sessionAnswered.add(id); sessionResults[id]='ng'; totals.ok=Number(totals.ok||0); totals.ng=Number(totals.ng||0)+1; saveStats(); updateStatsLine(); showToast('不正解を記録'); setTimeout(next,120);});
 $('nextBtn').addEventListener('click',next); $('prevBtn').addEventListener('click',prev);
 $('soundBtn').addEventListener('click',()=>{soundOn=!soundOn; $('soundBtn').textContent=soundOn?'音声 ON':'音声 OFF'; if(!soundOn && 'speechSynthesis' in window) speechSynthesis.cancel(); else render({speak:true});});
+function chapterCountClass(count){
+  count = Number(count||0);
+  if(count<=0) return 'count-zero';
+  if(count<=2) return 'count-low';
+  if(count<=5) return 'count-mid';
+  if(count<=9) return 'count-high';
+  return 'count-master';
+}
 function renderChapterMenu(){
   const grid=$('chapterGrid');
   grid.innerHTML=CHAPTERS.map((ch,i)=>{
@@ -439,7 +452,7 @@ function renderChapterMenu(){
     const active=i===activeChapter ? ' active' : '';
     return `<button type="button" class="chapterCard${active}" data-chapter="${i}">
       <div><div class="chapterName">${escapeHtml(ch.title)}</div><div class="chapterRange">問題${ch.startId}〜${ch.endId}</div></div>
-      <div class="chapterMeta"><span class="chapterCount">学習 ${Number(rec.count||0)}回</span><span class="chapterLast">${daysAgoLabel(rec.last)}</span></div>
+      <div class="chapterMeta"><span class="chapterCount ${chapterCountClass(rec.count)}">学習 ${Number(rec.count||0)}回</span><span class="chapterLast">${daysAgoLabel(rec.last)}</span></div>
     </button>`;
   }).join('');
 }
