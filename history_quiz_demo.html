@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>歴史一問一答</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="歴史一問一答">
+<meta name="theme-color" content="#050608">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23050608'/%3E%3Ccircle cx='90' cy='90' r='60' fill='none' stroke='%23ff405f' stroke-width='10'/%3E%3Ctext x='90' y='104' text-anchor='middle' font-size='54' font-family='Arial' fill='white' font-weight='700'%3E史%3C/text%3E%3C/svg%3E">
+<style>
+:root {
+  --bg:#050608; --panel:#111317; --panel2:#171a20; --text:#f6f6f6; --muted:#969aa3;
+  --accent:#d32f50; --accent2:#ff405f; --line:rgba(255,255,255,.13); --ok:#ff405f; --ng:#d9d9d9;
+}
+* { box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin:0; height:100%; background:radial-gradient(circle at 50% 0%, #171920 0%, var(--bg) 55%); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",YuGothic,"Noto Sans JP",sans-serif; }
+body { min-height:100dvh; display:flex; align-items:center; justify-content:center; padding:18px; padding-top:calc(18px + env(safe-area-inset-top)); overscroll-behavior:none; touch-action:manipulation; }
+.app { width:min(430px,100%); height:min(860px,100dvh - 20px); min-height:680px; border:1px solid rgba(255,255,255,.22); border-radius:34px; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01)); box-shadow:0 25px 70px rgba(0,0,0,.55); padding:18px 16px calc(18px + env(safe-area-inset-bottom)); position:relative; overflow:hidden; }
+.top { display:flex; align-items:center; justify-content:space-between; height:46px; font-size:15px; }
+.icon { width:42px; height:42px; display:grid; place-items:center; color:#fff; opacity:.9; font-size:26px; border-radius:14px; border:0; background:transparent; }
+.title { font-weight:700; letter-spacing:.04em; }
+.counter { text-align:center; margin:8px 0 18px; color:rgba(255,255,255,.55); font-size:17px; letter-spacing:.08em; }
+.counter span { color:var(--accent2); font-weight:800; }
+.card { height:420px; min-height:0; border:1px solid var(--line); border-radius:18px; background:linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); padding:28px 24px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; position:relative; overflow:hidden; }
+.label { color:var(--accent2); font-weight:800; margin-bottom:24px; letter-spacing:.12em; }
+.mainText { font-size:clamp(28px, 7vw, 42px); line-height:1.55; font-weight:800; letter-spacing:.015em; white-space:pre-line; line-break:strict; word-break:auto-phrase; overflow-wrap:break-word; text-wrap:balance; max-width:100%; max-height:245px; overflow:hidden; }
+.answer .mainText { font-size:clamp(40px, 11vw, 64px); line-height:1.25; max-height:180px; }
+.sub { margin-top:14px; color:var(--muted); font-weight:700; font-size:18px; }
+.speaker { margin-top:28px; color:#e7e7e7; font-size:15px; display:flex; align-items:center; gap:8px; opacity:.9; }
+.speaker b { color:var(--accent2); font-size:24px; }
+.hint { position:absolute; bottom:22px; left:24px; right:24px; border-top:1px solid var(--line); padding-top:22px; color:#d5d5d5; font-size:15px; }
+.buttons { display:flex; gap:18px; width:100%; margin-top:22px; justify-content:center; }
+.grade { width:108px; height:108px; border-radius:999px; background:transparent; border:2px solid var(--line); color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; font-weight:800; font-size:18px; }
+.grade .mark { font-size:52px; line-height:1; margin-bottom:6px; }
+.grade.ok { border-color:var(--accent2); box-shadow:0 0 0 1px rgba(255,64,95,.25) inset; }
+.grade.ng { color:#ddd; }
+.bottom { margin-top:18px; }
+.progressRow { display:flex; justify-content:space-between; color:#d5d5d5; font-size:14px; margin-bottom:8px; }
+.bar { width:100%; height:7px; border-radius:99px; background:rgba(255,255,255,.14); overflow:hidden; }
+.fill { height:100%; width:0%; background:linear-gradient(90deg, var(--accent), var(--accent2)); border-radius:99px; transition:.25s; }
+.nav { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; }
+.pill { border:1px solid var(--line); background:rgba(255,255,255,.04); color:#fff; border-radius:14px; padding:13px 10px; font-size:14px; font-weight:700; }
+.pill.active { border-color:var(--accent2); color:#fff; box-shadow:0 0 0 1px rgba(255,64,95,.2) inset; }
+.menu { position:absolute; inset:0; background:rgba(5,6,8,.96); padding:76px 22px 22px; transform:translateX(-105%); transition:.25s ease; z-index:5; }
+.menu.open { transform:translateX(0); }
+.menu h2 { margin:0 0 20px; text-align:center; }
+.menu button { width:100%; padding:18px; margin:8px 0; border-radius:16px; border:1px solid var(--line); background:rgba(255,255,255,.05); color:#fff; text-align:left; font-size:17px; font-weight:800; }
+.stats { color:#ddd; font-size:14px; line-height:1.8; margin-top:20px; padding:16px; border:1px solid var(--line); border-radius:16px; }
+.small { color:var(--muted); font-size:12px; text-align:center; margin-top:18px; }
+.flash { animation:pop .24s ease; }
+@keyframes pop { from { transform:scale(.985); opacity:.9; } to { transform:scale(1); opacity:1; } }
+@media (max-height:760px){
+  body{padding:10px; padding-top:calc(10px + env(safe-area-inset-top));}
+  .app{height:100dvh; min-height:0; border-radius:24px; padding:12px 14px calc(12px + env(safe-area-inset-bottom));}
+  .top{height:38px}.counter{margin:4px 0 10px}.card{height:390px;padding:22px 20px}.label{margin-bottom:18px}.mainText{max-height:230px}.speaker{margin-top:18px}.hint{bottom:18px}.nav{margin-top:10px}.pill{padding:10px 8px}.bottom{margin-top:12px}
+}
+
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="top">
+    <button class="icon" id="menuBtn">☰</button>
+    <div class="title">歴史一問一答</div>
+    <button class="icon" id="speakBtn">♪</button>
+  </div>
+  <div class="counter"><span id="currentNo">000</span> / <span id="totalNo">0000</span></div>
+  <div class="card" id="card">
+    <div class="label" id="label">問題</div>
+    <div class="mainText" id="mainText"></div>
+    <div class="sub" id="subText"></div>
+    <div class="speaker" id="speaker"><b>🔊</b><span>読み上げ中...</span></div>
+    <div class="buttons" id="buttons" style="display:none">
+      <button class="grade ok" id="okBtn"><span class="mark">○</span>正解</button>
+      <button class="grade ng" id="ngBtn"><span class="mark">×</span>不正解</button>
+    </div>
+    <div class="hint" id="hint">タップして答えを表示</div>
+  </div>
+  <div class="bottom">
+    <div class="progressRow"><span>進捗</span><span id="percent">0%</span></div>
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <div class="nav">
+      <button class="pill active" id="normalBtn">通常</button>
+      <button class="pill" id="reviewBtn">復習ランダム</button>
+      <button class="pill" id="autoBtn">自動再生 OFF</button>
+      <button class="pill" id="resetBtn">記録リセット</button>
+    </div>
+  </div>
+  <div class="menu" id="menu">
+    <button class="icon" id="closeMenu" style="position:absolute;top:18px;left:16px">×</button>
+    <h2>メニュー</h2>
+    <button id="continueBtn">▶ 学習を続ける<br><span style="font-size:13px;color:#999">前回の続きから</span></button>
+    <button id="wrongOnlyBtn">◎ 間違えた問題だけ<br><span style="font-size:13px;color:#999">不正解が多い問題を優先</span></button>
+    <button id="shuffleBtn">↝ 全問ランダム<br><span style="font-size:13px;color:#999">全問題からランダム</span></button>
+    <div class="stats" id="stats"></div>
+    <div class="small">学習データはこの端末内に保存されます</div>
+  </div>
+</div>
+<script>
+const QUESTIONS = [{"id": "506", "question": "黒船を率いて、1853年に浦賀へ来航し、開国をせまったアメリカ人はだれですか。", "answer": "ペリー"}, {"id": "507", "question": "ペリーと江戸幕府の間で、1854年に結ばれた条約を何といいますか。", "answer": "日米和親条約"}, {"id": "508", "question": "日米和親条約によって開かれた港を2つ答えなさい。", "answer": "下田・函館"}, {"id": "509", "question": "アメリカが、日本に開国を迫った理由を二つ挙げなさい", "answer": "捕鯨のための基地を得ること。中国との貿易の中継地とするため。"}, {"id": "510", "question": "日本とアメリカの間で貿易が始まることになった、1858年に結ばれた条約を何といいますか。", "answer": "日米修好通商条約"}, {"id": "511", "question": "日米修好通商条約が、日本にとって不利な条約とされたのはなぜですか。", "answer": "領事裁判権（治外法権）を認めていたから"}, {"id": "512", "question": "日米修好通商条約が、日本にとって不平等な条約と言われたもう一つの理由は何ですか。", "answer": "関税自主権がなかったこと"}, {"id": "513", "question": "日米修好通商条約によって開港した港を5つ答えなさい。", "answer": "函館・横浜・新潟・神戸・長崎"}, {"id": "514", "question": "江戸時代の終わりごろ、日本最大の貿易額をあげていた港はどこですか。", "answer": "横浜"}, {"id": "515", "question": "江戸時代末期の日本の主な輸出品を2つ答えなさい。", "answer": "生糸・茶"}, {"id": "516", "question": "日米修好通商条約締結後、外国人を追放しようとする運動を何といいますか。", "answer": "攘夷運動"}, {"id": "517", "question": "攘夷運動が起こったきっかけは何ですか？", "answer": "国内の品不足による物価上昇"}, {"id": "518", "question": "攘夷運動と、天皇中心の国を理想とする尊王思想が結びついた運動を何といいますか。", "answer": "尊王攘夷運動"}, {"id": "519", "question": "彦根藩出身で、朝廷の許可を得ずに日米修好通商条約を結んだ大老はだれですか。", "answer": "井伊直弼"}, {"id": "520", "question": "井伊直弼が1858年から行った、条約反対派を処罰する政策を何といいますか。", "answer": "安政のたい獄"}, {"id": "521", "question": "安政の大獄で処刑された、松下村塾を開いていた長州藩出身の人物はだれですか。", "answer": "吉田松陰"}, {"id": "522", "question": "井伊直弼が暗殺された、1860年の事件を何といいますか。", "answer": "桜田門外の変"}, {"id": "523", "question": "江戸時代末に、倒幕運動の中心となった九州地方の藩はどこですか。", "answer": "薩摩藩"}, {"id": "524", "question": "江戸時代末に、倒幕運動の中心となった中国地方の藩はどこですか。", "answer": "長州藩"}, {"id": "525", "question": "長州藩で奇兵隊を組織し、藩の改革を進めた人物はだれですか。", "answer": "高杉晋作"}, {"id": "526", "question": "現在の横浜市付近で、薩摩藩士がイギリス人を殺傷し、その後の対立のきっかけとなった事件を何といいますか。", "answer": "生麦事件"}, {"id": "527", "question": "生麦事件 をきっかけに、1863年にイギリス と 薩摩藩 の間で起こった戦争を何といいますか。", "answer": "薩英戦争"}, {"id": "528", "question": "薩摩藩と長州藩の間で結ばれた、1866年の同盟を何といいますか。", "answer": "薩長同盟"}, {"id": "529", "question": "薩長同盟の成立に力を尽くした土佐藩出身の人物はだれですか。", "answer": "坂本龍馬"}, {"id": "530", "question": "坂本龍馬の師にあたり、幕府の海軍で活躍した人物はだれですか。", "answer": "勝海舟"}, {"id": "531", "question": "江戸幕府の15代将軍はだれですか。", "answer": "徳川慶喜"}, {"id": "532", "question": "徳川慶喜が1867年に政権を朝廷へ返上したことを何といいますか。", "answer": "大政奉還"}];
+const STORE = 'history_quiz_demo_v1';
+let state = JSON.parse(localStorage.getItem(STORE) || '{}');
+state.index ??= 0; state.records ??= {}; state.mode ??= 'normal';
+let showingAnswer=false, auto=false, order=[...Array(QUESTIONS.length).keys()];
+const $=id=>document.getElementById(id);
+function save(){ localStorage.setItem(STORE, JSON.stringify(state)); }
+function speak(text){
+  window.speechSynthesis?.cancel();
+  if(!('speechSynthesis' in window)) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang='ja-JP'; u.rate=0.92; u.pitch=1.0;
+  speechSynthesis.speak(u);
+}
+function current(){ return QUESTIONS[order[state.index % order.length]]; }
+function updateStats(){
+  let ok=0,ng=0,done=0; Object.values(state.records).forEach(r=>{ ok+=r.ok||0; ng+=r.ng||0; if((r.ok||0)+(r.ng||0)>0) done++; });
+  let rate = ok+ng ? Math.round(ok/(ok+ng)*100) : 0;
+  $('stats').innerHTML = `総問題数：${QUESTIONS.length}問<br>学習済み：${done}問<br>正解：${ok}回 / 不正解：${ng}回<br>正解率：${rate}%`;
+}
+function render(){
+  const q=current(); const idx=state.index%order.length;
+  $('currentNo').textContent=q.id; $('totalNo').textContent=String(QUESTIONS.length).padStart(4,'0');
+  $('percent').textContent=Math.round((idx+1)/order.length*100)+'%'; $('fill').style.width=((idx+1)/order.length*100)+'%';
+  $('card').className='card flash '+(showingAnswer?'answer':'question');
+  $('label').textContent=showingAnswer?'答え':'問題';
+  $('mainText').textContent=showingAnswer ? q.answer : formatQuestion(q.question);
+  $('subText').textContent=showingAnswer?furigana(q.answer):'';
+  $('buttons').style.display=showingAnswer?'flex':'none';
+  $('hint').style.display=showingAnswer?'none':'block';
+  $('hint').textContent='タップして答えを表示';
+  $('speaker').style.display='flex';
+  requestAnimationFrame(fitText);
+  speak(showingAnswer?q.answer:q.question);
+  updateStats(); save();
+}
+function formatQuestion(text){
+  // 日本語として読みやすい位置に軽い改行候補を入れる。長文はJSで自動縮小して一画面に収める。
+  return text
+    .replace(/、/g,'、\n')
+    .replace(/。/g,'。')
+    .replace(/(何といいますか。|だれですか。|どこですか。|答えなさい。|なぜですか。|何ですか。)/g,'\n$1')
+    .replace(/\n\n+/g,'\n')
+    .trim();
+}
+function fitText(){
+  const el=$('mainText');
+  const card=$('card');
+  const base=showingAnswer?64:42;
+  const min=showingAnswer?34:22;
+  el.style.fontSize=base+'px';
+  let size=base;
+  const limit=showingAnswer?180:245;
+  while((el.scrollHeight>limit || el.scrollWidth>card.clientWidth-48) && size>min){
+    size-=1; el.style.fontSize=size+'px';
+  }
+}
+function furigana(ans){
+  const map={'問注所':'（もんちゅうじょ）','井伊直弼':'（いい なおすけ）','桜田門外の変':'（さくらだもんがいのへん）','安政のたい獄':'（あんせいのたいごく）','薩長同盟':'（さっちょうどうめい）'};
+  return map[ans]||'';
+}
+function next(){ showingAnswer=false; state.index=(state.index+1)%order.length; render(); }
+function showAnswer(){ showingAnswer=true; render(); }
+function record(kind){
+  const q=current(); state.records[q.id] ??= {ok:0, ng:0}; state.records[q.id][kind]++;
+  save(); next();
+}
+function makeWrongOrder(){
+  const arr=QUESTIONS.map((q,i)=>[i, state.records[q.id]?.ng||0]).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
+  order = arr.length ? arr : [...Array(QUESTIONS.length).keys()].sort(()=>Math.random()-0.5); state.index=0; showingAnswer=false; render();
+}
+function makeShuffleOrder(){ order=[...Array(QUESTIONS.length).keys()].sort(()=>Math.random()-0.5); state.index=0; showingAnswer=false; render(); }
+$('card').addEventListener('click',e=>{ if(e.target.closest('button')) return; showingAnswer?next():showAnswer(); });
+$('okBtn').onclick=e=>{e.stopPropagation(); record('ok')};
+$('ngBtn').onclick=e=>{e.stopPropagation(); record('ng')};
+$('menuBtn').onclick=()=>{ $('menu').classList.add('open'); updateStats(); };
+$('closeMenu').onclick=()=> $('menu').classList.remove('open');
+$('continueBtn').onclick=()=>{ $('menu').classList.remove('open'); order=[...Array(QUESTIONS.length).keys()]; render(); };
+$('wrongOnlyBtn').onclick=()=>{ $('menu').classList.remove('open'); makeWrongOrder(); };
+$('shuffleBtn').onclick=()=>{ $('menu').classList.remove('open'); makeShuffleOrder(); };
+$('reviewBtn').onclick=()=>makeWrongOrder();
+$('normalBtn').onclick=()=>{ order=[...Array(QUESTIONS.length).keys()]; state.index=0; showingAnswer=false; render(); };
+$('autoBtn').onclick=()=>{ auto=!auto; $('autoBtn').textContent='自動再生 '+(auto?'ON':'OFF'); if(auto) autoLoop(); };
+$('resetBtn').onclick=()=>{ if(confirm('学習記録をリセットしますか？')){ state.records={}; save(); updateStats(); } };
+$('speakBtn').onclick=()=> speak(showingAnswer?current().answer:current().question);
+function autoLoop(){ if(!auto) return; if(showingAnswer) next(); else showAnswer(); setTimeout(autoLoop, showingAnswer?2200:5200); }
+render();
+</script>
+</body>
+</html>
