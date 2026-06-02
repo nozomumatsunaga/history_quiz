@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="歴史一問一答">
-<title>歴史一問一答 Ver11.6</title>
+<title>歴史一問一答 Ver11.7</title>
 <style>
 :root {
   --accent:#d32f50;
@@ -113,6 +113,8 @@ let previewingQuestion = false;
 const $ = id => document.getElementById(id);
 const statsKey = 'history_quiz_v11_stats';
 const progressKey = 'history_quiz_v11_current';
+const totalsKey = 'history_quiz_v11_totals';
+let totals = JSON.parse(localStorage.getItem(totalsKey) || '{"ok":0,"ng":0}');
 let stats = JSON.parse(localStorage.getItem(statsKey) || '{}');
 current = Math.min(Math.max(parseInt(localStorage.getItem(progressKey)||'0',10)||0,0), QUESTIONS.length-1);
 
@@ -130,7 +132,7 @@ function protectUnits(text){
     let hit='';
     for(const term of protectedTerms){ if(text.startsWith(term,i)){ hit=term; break; } }
     if(!hit){
-      const m = text.slice(i).match(/^(\d(2, 4)年|\d(1, 2)月\d(1, 2)日|\d+(?:\.\d+)?％|約\d+(?:\.\d+)?%|\d+(?:\.\d+)?%|[A-Z]+|GHQ|PKO|[ァ-ヴー・＝](3,)|[一-龥々ヶ](2,)(?:時代|地方|戦争|事件|条約|同盟|改革|運動|制度|法|令|藩|国|幕府|天皇|将軍|大臣|文化|貿易|会議|憲法|学校|神社|寺|遺跡|古墳|市|県|島|山|川|海|湾|半島|列島|街道|航路|大名|上皇|親王|王国)?)/);
+      const m = text.slice(i).match(/^(\d{2,4}年|\d(1, 2)月\d(1, 2)日|\d+(?:\.\d+)?％|約\d+(?:\.\d+)?%|\d+(?:\.\d+)?%|[A-Z]+|GHQ|PKO|[ァ-ヴー・＝]{3,}|[一-龥々ヶ]{2,}(?:時代|地方|戦争|事件|条約|同盟|改革|運動|制度|法|令|藩|国|幕府|天皇|将軍|大臣|文化|貿易|会議|憲法|学校|神社|寺|遺跡|古墳|市|県|島|山|川|海|湾|半島|列島|街道|航路|大名|上皇|親王|王国)?)/);
       if(m) hit=m[0];
     }
     if(hit){ parts.push({t:hit,p:true}); i+=hit.length; }
@@ -181,17 +183,20 @@ function render(opts={}){
   if(opts.speak) speak(isAnswer?q.answer:q.question);
 }
 function updateStatsLine(){
-  const id=QUESTIONS[current].id;
-  const s=stats[id]||{ok:0,ng:0};
-  $('statLine').textContent=`正解 ${s.ok||0}　不正解 ${s.ng||0}`;
+  totals.ok = Number(totals.ok||0);
+  totals.ng = Number(totals.ng||0);
+  $('statLine').textContent=`正解 ${totals.ok}　不正解 ${totals.ng}`;
 }
-function saveStats(){localStorage.setItem(statsKey,JSON.stringify(stats));}
+function saveStats(){
+  localStorage.setItem(statsKey,JSON.stringify(stats));
+  localStorage.setItem(totalsKey,JSON.stringify(totals));
+}
 function showToast(t){const el=$('toast'); el.textContent=t; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),900);}
 function next(){ current=(current+1)%QUESTIONS.length; showingAnswer=false; previewingQuestion=false; render({speak:true}); }
 function prev(){ current=(current-1+QUESTIONS.length)%QUESTIONS.length; showingAnswer=false; previewingQuestion=false; render({speak:true}); }
 $('answerBtn').addEventListener('click',()=>{showingAnswer=true; previewingQuestion=false; render({speak:true});});
-$('correctBtn').addEventListener('click',()=>{const id=QUESTIONS[current].id; const s=stats[id]||{ok:0,ng:0}; s.ok=Number(s.ok||0)+1; s.ng=Number(s.ng||0); stats[id]=s; saveStats(); showToast('正解を記録'); next();});
-$('wrongBtn').addEventListener('click',()=>{const id=QUESTIONS[current].id; const s=stats[id]||{ok:0,ng:0}; s.ok=Number(s.ok||0); s.ng=Number(s.ng||0)+1; stats[id]=s; saveStats(); showToast('不正解を記録'); next();});
+$('correctBtn').addEventListener('click',()=>{const id=QUESTIONS[current].id; const s=stats[id]||{ok:0,ng:0}; s.ok=Number(s.ok||0)+1; s.ng=Number(s.ng||0); stats[id]=s; totals.ok=Number(totals.ok||0)+1; totals.ng=Number(totals.ng||0); saveStats(); updateStatsLine(); showToast('正解を記録'); setTimeout(next,120);});
+$('wrongBtn').addEventListener('click',()=>{const id=QUESTIONS[current].id; const s=stats[id]||{ok:0,ng:0}; s.ok=Number(s.ok||0); s.ng=Number(s.ng||0)+1; stats[id]=s; totals.ok=Number(totals.ok||0); totals.ng=Number(totals.ng||0)+1; saveStats(); updateStatsLine(); showToast('不正解を記録'); setTimeout(next,120);});
 $('nextBtn').addEventListener('click',next); $('prevBtn').addEventListener('click',prev);
 $('soundBtn').addEventListener('click',()=>{soundOn=!soundOn; $('soundBtn').textContent=soundOn?'音声 ON':'音声 OFF'; if(!soundOn && 'speechSynthesis' in window) speechSynthesis.cancel(); else render({speak:true});});
 $('menuBtn').addEventListener('click',()=>showToast('チャプター選択は次版で追加'));
