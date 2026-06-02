@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="歴史一問一答">
-<title>歴史一問一答 Ver12.5</title>
+<title>歴史一問一答 Ver12.6</title>
 <style>
 :root {
   --accent:#d32f50;
@@ -56,7 +56,15 @@ button{font-family:inherit;touch-action:manipulation;}
 .judgeBtn .txt{font-size:18px;line-height:1;}
 .correct{background:var(--green);}
 .wrong{background:var(--red);}
-.stats{border-radius:20px;background:rgba(255,255,255,.65);border:1px solid var(--line);padding:9px 8px;text-align:center;color:var(--muted);font-size:12px;font-weight:800;line-height:1.6;}
+.stats{border-radius:20px;background:rgba(255,255,255,.65);border:1px solid var(--line);padding:9px 8px;text-align:center;color:var(--muted);font-size:12px;font-weight:800;line-height:1.35;display:flex;flex-direction:column;gap:8px;justify-content:flex-end;}
+.rateBox{border-radius:18px;background:#fff;border:1px solid var(--line);padding:9px 6px 10px;}
+.rateLabel{font-size:12px;font-weight:950;color:#8a8178;letter-spacing:.08em;margin-bottom:2px;}
+.rateValue{font-size:clamp(28px,3.8vw,38px);font-weight:1000;line-height:1;letter-spacing:.01em;color:#486a9a;}
+.rateValue.rate-gold{color:#c99622;}
+.rateValue.rate-navy{color:#486a9a;}
+.rateValue.rate-green{color:#3f8f74;}
+.rateValue.rate-cool{color:#7890aa;}
+.rateValue.rate-none{color:#a49b92;}
 .smallRow{display:flex;gap:8px;}
 .navBtn{flex:1;border:1px solid var(--line);background:#fff;border-radius:16px;min-height:40px;font-weight:900;color:#5d5650;}
 .hidden{display:none!important;}
@@ -145,7 +153,7 @@ body.previewMode .label{color:#7aa5d8;}
         </div>
       </div>
       <div class="stats">
-        <div id="statLine">正解 0　不正解 0</div>
+        <div id="statLine" class="rateBox"><div class="rateLabel">正解率</div><div id="rateValue" class="rateValue rate-none">--%</div></div>
         <div class="smallRow"><button id="prevBtn" class="navBtn">戻る</button><button id="nextBtn" class="navBtn">次へ</button></div>
       </div>
     </aside>
@@ -327,9 +335,27 @@ function render(opts={}){
   if(opts.speak) speak(isAnswer?q.answer:q.question);
 }
 function updateStatsLine(){
-  totals.ok = Number(totals.ok||0);
-  totals.ng = Number(totals.ng||0);
-  $('statLine').textContent=`正解 ${totals.ok}　不正解 ${totals.ng}`;
+  // 学習中の表示は累計の○×ではなく、このチャプターの現在正解率。
+  // 戻る／次への位置は変えず、右下の情報だけをポジティブな指標にする。
+  let ok=0, ng=0;
+  for(const key in sessionResults){
+    if(sessionResults[key]==='ok') ok++;
+    else if(sessionResults[key]==='ng') ng++;
+  }
+  const answered = ok + ng;
+  const el = $('rateValue');
+  el.className = 'rateValue';
+  if(!answered){
+    el.textContent='--%';
+    el.classList.add('rate-none');
+    return;
+  }
+  const rate = Math.round(ok / answered * 100);
+  el.textContent = `${rate}%`;
+  if(rate===100) el.classList.add('rate-gold');
+  else if(rate>=75) el.classList.add('rate-navy');
+  else if(rate>=50) el.classList.add('rate-green');
+  else el.classList.add('rate-cool');
 }
 function saveStats(){
   localStorage.setItem(statsKey,JSON.stringify(stats));
