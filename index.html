@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="歴史一問一答">
-<title>歴史一問一答 Ver12.4</title>
+<title>歴史一問一答 Ver12.5</title>
 <style>
 :root {
   --accent:#d32f50;
@@ -31,12 +31,16 @@ button{font-family:inherit;touch-action:manipulation;}
 .app{height:100svh;min-height:100svh;display:grid;grid-template-rows:52px 1fr;gap:8px;padding: max(8px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));}
 .topbar{display:grid;grid-template-columns:1.1fr auto auto;align-items:center;gap:16px;padding:0 8px 0 16px;}
 .period{font-weight:900;color:var(--accent);font-size:clamp(22px,3.1vw,31px);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.meta{font-size:clamp(15px,1.8vw,19px);font-weight:800;color:#3b3732;white-space:nowrap;}
+.meta{display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.pill{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:7px 14px;font-size:clamp(18px,2.25vw,24px);font-weight:950;line-height:1;letter-spacing:.02em;min-width:0;}
+.qPill{background:#f5f5f7;color:#34312e;border:1px solid #e5e1dc;}
+.remainPill{background:#eef4ff;color:#486a9a;border:1px solid #d8e5fb;}
 .miniBtns{display:flex;gap:8px;}
 .miniBtn{border:1px solid var(--line);background:rgba(255,255,255,.65);border-radius:999px;padding:8px 11px;font-size:13px;color:#564f49;font-weight:800;}
 .stage{display:grid;grid-template-columns:minmax(0,1fr) 156px;gap:12px;min-height:0;}
 .card{min-width:0;min-height:0;background:var(--card);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);display:grid;grid-template-rows:52px minmax(0,1fr);padding:0 30px 18px;}
-.label{height:52px;display:flex;align-items:flex-end;justify-content:center;font-size:clamp(24px,3vw,32px);font-weight:900;color:var(--accent);letter-spacing:.12em;padding-bottom:4px;}
+.label{height:52px;display:flex;align-items:flex-end;justify-content:center;font-size:clamp(31px,3.8vw,41px);font-weight:950;color:var(--accent);letter-spacing:.12em;padding-bottom:4px;}
+.label.answerLabel{color:#486a9a;}
 .textArea{min-height:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 4px 8px;overflow:hidden;}
 .mainText{font-weight:850;line-height:1.42;letter-spacing:.01em;color:var(--ink);max-width:100%;}
 .mainText.answer{font-weight:900;line-height:1.34;}
@@ -109,7 +113,7 @@ body.previewMode .label{color:#7aa5d8;}
 @media (max-height:430px) and (orientation:landscape){
   .app{grid-template-rows:46px 1fr;gap:6px;padding-top:max(6px,env(safe-area-inset-top));}
   .card{grid-template-rows:46px minmax(0,1fr);border-radius:22px;padding:0 26px 14px;}
-  .label{height:46px;font-size:26px;}
+  .label{height:46px;font-size:34px;}
   .stage{grid-template-columns:minmax(0,1fr) 148px;gap:10px;}
   .primaryBtn{min-height:116px;font-size:20px;}
   .judgeBtn{min-height:74px;}
@@ -123,7 +127,7 @@ body.previewMode .label{color:#7aa5d8;}
 <div class="app">
   <header class="topbar">
     <div id="period" class="period">江戸時代</div>
-    <div id="meta" class="meta">問題512　7/27</div>
+    <div id="meta" class="meta"><span id="qidPill" class="pill qPill">問題512</span><span id="remainPill" class="pill remainPill">残り0問</span></div>
     <div class="miniBtns"><button id="soundBtn" class="miniBtn">音声 OFF</button><button id="menuBtn" class="miniBtn">メニュー</button></div>
   </header>
   <main class="stage">
@@ -306,10 +310,12 @@ function render(opts={}){
   const q=QUESTIONS[current];
   const ch=activeCh();
   $('period').textContent=ch.title;
-  $('meta').textContent=`問題${q.id}　残り${remainingCount()}問`;
+  $('qidPill').textContent=`問題${q.id}`;
+  $('remainPill').textContent=`残り${remainingCount()}問`;
   const isAnswer = showingAnswer && !previewingQuestion;
   document.body.classList.toggle('previewMode', previewingQuestion);
   $('label').textContent=isAnswer?'答え':'問題';
+  $('label').classList.toggle('answerLabel', isAnswer);
   $('mainText').className='mainText '+(isAnswer?'answer':'');
   $('mainText').innerHTML=protectUnits(isAnswer?q.answer:q.question);
   $('answerBtn').classList.toggle('hidden', showingAnswer);
