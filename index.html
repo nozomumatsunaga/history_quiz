@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="歴史一問一答">
-<title>歴史一問一答 Ver12.6.1</title>
+<title>歴史一問一答 Ver13.0</title>
 <style>
 :root {
   --accent:#d32f50;
@@ -73,6 +73,18 @@ button{font-family:inherit;touch-action:manipulation;}
 body.previewMode .card{background:#f5f8fb;}
 body.previewMode .label{color:#7aa5d8;}
 
+.splashOverlay{position:fixed;inset:0;background:var(--bg);z-index:85;display:flex;align-items:center;justify-content:center;padding:max(18px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left));}
+.splashOverlay.hide{display:none;}
+.splashCard{width:min(640px,92vw);min-height:min(70vh,430px);background:var(--card);border:1px solid var(--line);border-radius:34px;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:42px 52px;position:relative;overflow:hidden;}
+.splashCard:before{content:"";position:absolute;inset:auto -20% -55% -20%;height:62%;background:radial-gradient(circle at 50% 0%,rgba(211,47,80,.10),rgba(211,47,80,0) 68%);pointer-events:none;}
+.splashKicker{font-size:13px;font-weight:950;letter-spacing:.22em;color:#9b9086;margin-bottom:14px;}
+.splashTitle{font-size:clamp(48px,8vw,76px);font-weight:1000;letter-spacing:.06em;color:#2d2925;line-height:1;margin-bottom:22px;}
+.splashTitle .num{color:var(--accent);letter-spacing:.02em;}
+.splashCopy{font-size:clamp(17px,2.35vw,22px);font-weight:850;color:#716961;letter-spacing:.04em;margin-bottom:34px;}
+.startStudyBtn{border:0;border-radius:999px;background:var(--accent);color:#fff;font-weight:950;font-size:clamp(20px,2.8vw,28px);letter-spacing:.06em;min-width:min(420px,72vw);height:74px;box-shadow:0 12px 24px rgba(211,47,80,.22);}
+.startStudyBtn:active{transform:translateY(1px);background:var(--accent-dark);}
+.splashFoot{margin-top:18px;font-size:12px;font-weight:850;color:#aaa096;letter-spacing:.08em;}
+@media (max-height:430px) and (orientation:landscape){.splashCard{min-height:300px;padding:28px 42px;border-radius:28px}.splashKicker{margin-bottom:8px}.splashTitle{font-size:48px;margin-bottom:14px}.splashCopy{font-size:16px;margin-bottom:22px}.startStudyBtn{height:58px;font-size:20px}.splashFoot{margin-top:12px}}
 
 .menuOverlay{position:fixed;inset:0;background:rgba(245,242,236,.96);backdrop-filter:blur(10px);z-index:80;display:none;padding:max(18px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left));}
 .menuOverlay.show{display:block;}
@@ -137,6 +149,16 @@ body.previewMode .label{color:#7aa5d8;}
 </head>
 <body>
 <div id="portraitGuard"><div class="guardBox"><div class="guardIcon">↻</div><div class="guardText">横向きにしてください</div><div class="guardSub">この教材は横画面で見やすく設計しています</div></div></div>
+<div id="splashOverlay" class="splashOverlay" aria-hidden="false">
+  <div class="splashCard">
+    <div class="splashKicker">HISTORY STUDY</div>
+    <div class="splashTitle">歴史<span class="num">733</span></div>
+    <div class="splashCopy">今日も少し進めよう</div>
+    <button id="startStudyBtn" class="startStudyBtn">学習を始める</button>
+    <div class="splashFoot">タップしてチャプターを選択</div>
+  </div>
+</div>
+
 <div class="app">
   <header class="topbar">
     <div id="period" class="period">江戸時代</div>
@@ -498,6 +520,12 @@ $('resultMenuBtn').addEventListener('click',()=>{
   const ch=activeCh();
   resetSession();
   current=ch.startIndex; showingAnswer=false; previewingQuestion=false; render();
+  openChapterMenu();
+});
+
+$('startStudyBtn').addEventListener('click',()=>{
+  $('splashOverlay').classList.add('hide');
+  $('splashOverlay').setAttribute('aria-hidden','true');
   openChapterMenu();
 });
 render();
