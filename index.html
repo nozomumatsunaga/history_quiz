@@ -143,7 +143,7 @@ body.previewMode .label{color:#7aa5d8;}
 
 <div id="confirmOverlay" class="confirmOverlay" aria-hidden="true">
   <div class="confirmBox">
-    <div class="confirmTitle">まだ残っています</div>
+    <div id="confirmTitle" class="confirmTitle">まだ残っています</div>
     <div id="confirmText" class="confirmText">あと0問残っています。今回の学習は無効になりますが、メニューに戻りますか？</div>
     <div class="confirmBtns">
       <button id="continueStudyBtn" class="confirmBtn primary">学習を続ける</button>
@@ -190,12 +190,20 @@ if(current < CHAPTERS[activeChapter].startIndex || current > CHAPTERS[activeChap
 if(current < CHAPTERS[activeChapter].startIndex || current > CHAPTERS[activeChapter].endIndex){ current = CHAPTERS[activeChapter].startIndex; }
 let sessionAnswered = new Set();
 let pendingMenuOpen = false;
+let catchUpMode = false;
 
 function findChapterIndexByQuestion(index){ return CHAPTERS.findIndex(ch => index>=ch.startIndex && index<=ch.endIndex); }
 function activeCh(){ return CHAPTERS[activeChapter]; }
 function remainingCount(){ return Math.max(0, activeCh().count - sessionAnswered.size); }
-function resetSession(){ sessionAnswered = new Set(); }
+function resetSession(){ sessionAnswered = new Set(); catchUpMode=false; }
 function currentAnswered(){ return sessionAnswered.has(QUESTIONS[current].id); }
+function firstUnansweredIndex(){
+  const ch=activeCh();
+  for(let i=ch.startIndex;i<=ch.endIndex;i++){
+    if(!sessionAnswered.has(QUESTIONS[i].id)) return i;
+  }
+  return -1;
+}
 function formatDate(d=new Date()){ return `${d.getMonth()+1}/${d.getDate()}`; }
 function todayISO(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 function daysAgoLabel(iso){
@@ -302,6 +310,12 @@ function completeChapter(){
 }
 function next(){
   const ch=activeCh();
+  if(catchUpMode){
+    const idx = firstUnansweredIndex();
+    if(idx < 0){ completeChapter(); return; }
+    current = idx; showingAnswer=false; previewingQuestion=false; render({speak:true});
+    return;
+  }
   if(current>=ch.endIndex){
     if(remainingCount()===0){ completeChapter(); }
     else { showIncompleteConfirm(); }
@@ -328,13 +342,24 @@ function renderChapterMenu(){
 }
 function openChapterMenu(){ renderChapterMenu(); $('chapterMenu').classList.add('show'); $('chapterMenu').setAttribute('aria-hidden','false'); }
 function requestMenu(){ if(sessionAnswered.size>0 && remainingCount()>0){ showIncompleteConfirm(); } else { openChapterMenu(); } }
-function showIncompleteConfirm(){ $('confirmText').textContent=`あと${remainingCount()}問残っています。今回の学習は無効になりますが、メニューに戻りますか？`; $('confirmOverlay').classList.add('show'); $('confirmOverlay').setAttribute('aria-hidden','false'); }
+function showIncompleteConfirm(){
+  const left = remainingCount();
+  $('confirmTitle').textContent = `あと${left}問残っているよ`;
+  $('confirmText').textContent = `学習を続けると、未回答のいちばん若い番号から再開します。メニューに戻ると今回の学習はカウントされません。`;
+  $('confirmOverlay').classList.add('show');
+  $('confirmOverlay').setAttribute('aria-hidden','false');
+}
 function closeIncompleteConfirm(){ $('confirmOverlay').classList.remove('show'); $('confirmOverlay').setAttribute('aria-hidden','true'); }
 function closeChapterMenu(){ $('chapterMenu').classList.remove('show'); $('chapterMenu').setAttribute('aria-hidden','true'); }
 function selectChapter(i){ activeChapter=i; current=CHAPTERS[i].startIndex; showingAnswer=false; previewingQuestion=false; resetSession(); saveChapterState(); closeChapterMenu(); render({speak:true}); }
 $('menuBtn').addEventListener('click',requestMenu);
 $('closeMenuBtn').addEventListener('click',closeChapterMenu);
-$('continueStudyBtn').addEventListener('click',closeIncompleteConfirm);
+$('continueStudyBtn').addEventListener('click',()=>{
+  closeIncompleteConfirm();
+  catchUpMode = true;
+  const idx = firstUnansweredIndex();
+  if(idx >= 0){ current = idx; showingAnswer=false; previewingQuestion=false; render({speak:true}); }
+});
 $('returnMenuBtn').addEventListener('click',()=>{ closeIncompleteConfirm(); resetSession(); openChapterMenu(); });
 $('chapterGrid').addEventListener('click',(e)=>{ const btn=e.target.closest('.chapterCard'); if(btn) selectChapter(Number(btn.dataset.chapter)); });
 $('chapterMenu').addEventListener('click',(e)=>{ if(e.target.id==='chapterMenu') closeChapterMenu(); });
