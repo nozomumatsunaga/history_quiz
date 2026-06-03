@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="歴史一問一答">
-<title>歴史一問一答 Ver13.0 V2</title>
+<title>歴史733 Ver2 浅瀬</title>
 <style>
 :root {
   --accent:#d32f50;
@@ -107,6 +107,33 @@ body.previewMode .label{color:#7aa5d8;}
 .chapterCount.count-high{color:#d4a93a;}
 .chapterCount.count-master{color:#d33a50;}
 .chapterLast{white-space:nowrap;color:#8f867d;font-size:15px;font-weight:950;}
+
+.chapterNum{font-size:clamp(24px,3.1vw,34px);font-weight:1000;color:#d33a50;letter-spacing:.02em;line-height:1;white-space:nowrap;min-width:2.4em;}
+.chapterTop{display:flex;align-items:flex-start;gap:12px;}
+.chapterInfo{min-width:0;}
+.chapterHint{font-size:10px;color:#aaa096;font-weight:850;margin-top:5px;letter-spacing:.02em;}
+.menuTools{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;margin-bottom:12px;align-items:center;}
+.searchInput{height:42px;border:1px solid var(--line);border-radius:999px;background:#fff;padding:0 15px;font-size:15px;font-weight:850;color:#3a3530;outline:none;}
+.toolBtn{height:42px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#554e48;font-size:14px;font-weight:950;padding:0 13px;white-space:nowrap;}
+.toolBtn:active{transform:translateY(1px);}
+.browserOverlay{position:fixed;inset:0;background:rgba(245,242,236,.96);z-index:80;display:none;padding:max(10px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));}
+.browserOverlay.show{display:flex;align-items:center;justify-content:center;}
+.browserPanel{width:min(1000px,96vw);height:min(650px,92vh);background:var(--card);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);padding:18px;display:grid;grid-template-rows:auto 1fr;gap:12px;}
+.browserHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.browserTitle{font-size:26px;font-weight:1000;color:#2f2b27;line-height:1.15;}
+.browserSub{font-size:12px;font-weight:850;color:#8b837b;margin-top:5px;}
+.browserClose{height:40px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:0 16px;font-weight:950;color:#5b554f;}
+.problemList{overflow:auto;-webkit-overflow-scrolling:touch;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:2px 2px 10px;}
+.problemItem{border:1px solid var(--line);background:#fff;border-radius:16px;text-align:left;padding:11px 12px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;min-height:72px;}
+.problemItem:active{transform:translateY(1px);}
+.problemNo{font-size:16px;font-weight:1000;color:#d33a50;white-space:nowrap;line-height:1.25;}
+.problemTxt{font-size:14px;font-weight:850;color:#34302c;line-height:1.36;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.problemAns{font-size:12px;font-weight:900;color:#486a9a;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.emptyList{height:100%;display:flex;align-items:center;justify-content:center;text-align:center;color:#928a82;font-weight:900;font-size:18px;}
+body.browseMode .period{color:#486a9a;}
+body.browseMode .remainPill{background:#f5f5f7;color:#6a625a;border-color:#e5e1dc;}
+@media (max-height:430px) and (orientation:landscape){.problemList{grid-template-columns:1fr 1fr 1fr}.browserPanel{height:94vh;padding:12px;border-radius:22px}.browserTitle{font-size:22px}.menuTools{margin-bottom:8px}.searchInput,.toolBtn{height:36px;font-size:12px}.chapterNum{font-size:24px}}
+
 .confirmOverlay{position:fixed;inset:0;background:rgba(35,30,25,.28);backdrop-filter:blur(8px);z-index:130;display:none;align-items:center;justify-content:center;padding:24px;}
 .confirmOverlay.show{display:flex;}
 .confirmBox{width:min(560px,92vw);background:var(--card);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);padding:28px 30px;text-align:center;}
@@ -193,7 +220,23 @@ body.previewMode .label{color:#7aa5d8;}
       <div><div class="menuTitle">チャプター選択</div><div class="menuSub">学習回数と最終学習日はこの端末に保存されます</div></div>
       <button id="closeMenuBtn" class="closeMenu">閉じる</button>
     </div>
+    <div class="menuTools">
+      <input id="keywordInput" class="searchInput" type="search" placeholder="キーワード検索（例：白村江・1853・ペリー）">
+      <button id="yearSearchBtn" class="toolBtn">年号</button>
+      <button id="personSearchBtn" class="toolBtn">人名</button>
+    </div>
     <div id="chapterGrid" class="chapterGrid"></div>
+  </div>
+</div>
+
+
+<div id="browserOverlay" class="browserOverlay" aria-hidden="true">
+  <div class="browserPanel">
+    <div class="browserHead">
+      <div><div id="browserTitle" class="browserTitle">問題一覧</div><div id="browserSub" class="browserSub">確認モード：ここから開いた問題は学習履歴にカウントしません</div></div>
+      <button id="browserCloseBtn" class="browserClose">閉じる</button>
+    </div>
+    <div id="problemList" class="problemList"></div>
   </div>
 </div>
 
@@ -264,6 +307,10 @@ let sessionAnswered = new Set();
 let sessionResults = {};
 let pendingMenuOpen = false;
 let catchUpMode = false;
+let browseMode = false;
+let browseIndices = [];
+let browseTitle = "確認モード";
+let suppressChapterClick = false;
 
 function findChapterIndexByQuestion(index){ return CHAPTERS.findIndex(ch => index>=ch.startIndex && index<=ch.endIndex); }
 function activeCh(){ return CHAPTERS[activeChapter]; }
@@ -344,21 +391,22 @@ function speak(text){
 function render(opts={}){
   const q=QUESTIONS[current];
   const ch=activeCh();
-  $('period').textContent=ch.title;
+  $('period').textContent=browseMode ? '確認モード' : ch.title;
   $('qidPill').textContent=`問題${q.id}`;
-  $('remainPill').textContent=`残り${remainingCount()}問`;
+  $('remainPill').textContent=browseMode ? '履歴なし' : `残り${remainingCount()}問`;
   const isAnswer = showingAnswer && !previewingQuestion;
   document.body.classList.toggle('previewMode', previewingQuestion);
+  document.body.classList.toggle('browseMode', browseMode);
   $('label').textContent=isAnswer?'答え':'問題';
   $('label').classList.toggle('answerLabel', isAnswer);
   $('mainText').className='mainText '+(isAnswer?'answer':'');
   $('mainText').innerHTML=protectUnits(isAnswer?q.answer:q.question);
   $('answerBtn').classList.toggle('hidden', showingAnswer);
   $('holdQuestionBtn').classList.toggle('hidden', !showingAnswer);
-  $('judgeGrid').classList.toggle('hidden', !showingAnswer);
+  $('judgeGrid').classList.toggle('hidden', !showingAnswer || browseMode);
   updateStatsLine();
   requestAnimationFrame(fitText);
-  saveChapterState();
+  if(!browseMode) saveChapterState();
   if(opts.speak) speak(isAnswer?q.answer:q.question);
 }
 function updateStatsLine(){
@@ -439,21 +487,32 @@ function showResult(ch){
 function closeResult(){ $('resultOverlay').classList.remove('show'); $('resultOverlay').setAttribute('aria-hidden','true'); }
 
 function next(){
+  if(browseMode){
+    const pos=browseIndices.indexOf(current);
+    if(pos>=0 && browseIndices.length){ current=browseIndices[(pos+1)%browseIndices.length]; }
+    else { current=(current+1)%QUESTIONS.length; }
+    activeChapter=findChapterIndexByQuestion(current); showingAnswer=false; previewingQuestion=false; render({speak:true}); return;
+  }
   const ch=activeCh();
   if(catchUpMode){
-    const idx = firstUnansweredIndex();
-    if(idx < 0){ completeChapter(); return; }
-    current = idx; showingAnswer=false; previewingQuestion=false; render({speak:true});
-    return;
+    const idx=firstUnansweredIndex();
+    if(idx>=0){ current=idx; showingAnswer=false; previewingQuestion=false; render({speak:true}); return; }
   }
-  if(current>=ch.endIndex){
+  if(current >= ch.endIndex){
     if(remainingCount()===0){ completeChapter(); }
     else { showIncompleteConfirm(); }
     return;
   }
   current++; showingAnswer=false; previewingQuestion=false; render({speak:true});
 }
-function prev(){ const ch=activeCh(); current = current<=ch.startIndex ? ch.endIndex : current-1; showingAnswer=false; previewingQuestion=false; render({speak:true}); }
+function prev(){
+  if(browseMode){
+    const pos=browseIndices.indexOf(current);
+    if(pos>=0 && browseIndices.length){ current=browseIndices[(pos-1+browseIndices.length)%browseIndices.length]; }
+    else { current=(current-1+QUESTIONS.length)%QUESTIONS.length; }
+    activeChapter=findChapterIndexByQuestion(current); showingAnswer=false; previewingQuestion=false; render({speak:true}); return;
+  }
+  const ch=activeCh(); current = current<=ch.startIndex ? ch.endIndex : current-1; showingAnswer=false; previewingQuestion=false; render({speak:true}); }
 $('answerBtn').addEventListener('click',()=>{showingAnswer=true; previewingQuestion=false; render({speak:true});});
 $('correctBtn').addEventListener('click',()=>{const id=QUESTIONS[current].id; const s=stats[id]||{ok:0,ng:0}; s.ok=Number(s.ok||0)+1; s.ng=Number(s.ng||0); stats[id]=s; sessionAnswered.add(id); sessionResults[id]='ok'; totals.ok=Number(totals.ok||0)+1; totals.ng=Number(totals.ng||0); saveStats(); updateStatsLine(); showToast('正解を記録'); setTimeout(next,120);});
 $('wrongBtn').addEventListener('click',()=>{const id=QUESTIONS[current].id; const s=stats[id]||{ok:0,ng:0}; s.ok=Number(s.ok||0); s.ng=Number(s.ng||0)+1; stats[id]=s; sessionAnswered.add(id); sessionResults[id]='ng'; totals.ok=Number(totals.ok||0); totals.ng=Number(totals.ng||0)+1; saveStats(); updateStatsLine(); showToast('不正解を記録'); setTimeout(next,120);});
@@ -472,14 +531,15 @@ function renderChapterMenu(){
   grid.innerHTML=CHAPTERS.map((ch,i)=>{
     const rec=chapterStats[ch.id] || {count:0,last:''};
     const active=i===activeChapter ? ' active' : '';
-    return `<button type="button" class="chapterCard${active}" data-chapter="${i}">
-      <div><div class="chapterName">${escapeHtml(ch.title)}</div><div class="chapterRange">問題${ch.startId}〜${ch.endId}</div></div>
+    const num=String(ch.id).padStart(2,'0');
+    return `<button type="button" class="chapterCard${active}" data-chapter="${i}" aria-label="チャプター${num} ${escapeHtml(ch.title)}">
+      <div class="chapterTop"><div class="chapterNum">#${num}</div><div class="chapterInfo"><div class="chapterName">${escapeHtml(ch.title)}</div><div class="chapterRange">問題${ch.startId}〜${ch.endId}</div><div class="chapterHint">長押しで問題一覧</div></div></div>
       <div class="chapterMeta"><span class="chapterCount ${chapterCountClass(rec.count)}">学習 ${Number(rec.count||0)}回</span><span class="chapterLast">${daysAgoLabel(rec.last)}</span></div>
     </button>`;
   }).join('');
 }
 function openChapterMenu(){ renderChapterMenu(); $('chapterMenu').classList.add('show'); $('chapterMenu').setAttribute('aria-hidden','false'); }
-function requestMenu(){ if(sessionAnswered.size>0 && remainingCount()>0){ showIncompleteConfirm(); } else { openChapterMenu(); } }
+function requestMenu(){ if(browseMode){ browseMode=false; openChapterMenu(); render(); return; } if(sessionAnswered.size>0 && remainingCount()>0){ showIncompleteConfirm(); } else { openChapterMenu(); } }
 function showIncompleteConfirm(){
   const left = remainingCount();
   $('confirmTitle').textContent = `あと${left}問残っているよ`;
@@ -490,7 +550,55 @@ function showIncompleteConfirm(){
 }
 function closeIncompleteConfirm(){ $('confirmOverlay').classList.remove('show'); $('confirmOverlay').setAttribute('aria-hidden','true'); }
 function closeChapterMenu(){ $('chapterMenu').classList.remove('show'); $('chapterMenu').setAttribute('aria-hidden','true'); }
-function selectChapter(i){ activeChapter=i; current=CHAPTERS[i].startIndex; showingAnswer=false; previewingQuestion=false; resetSession(); saveChapterState(); closeChapterMenu(); render({speak:true}); }
+function selectChapter(i){ browseMode=false; activeChapter=i; current=CHAPTERS[i].startIndex; showingAnswer=false; previewingQuestion=false; resetSession(); saveChapterState(); closeChapterMenu(); render({speak:true}); }
+
+function openProblemBrowser(title, indices, sub='確認モード：ここから開いた問題は学習履歴にカウントしません'){
+  browseIndices = Array.from(new Set(indices)).filter(i=>i>=0 && i<QUESTIONS.length);
+  browseTitle = title;
+  $('browserTitle').textContent = title;
+  $('browserSub').textContent = sub;
+  const list=$('problemList');
+  if(!browseIndices.length){ list.className='emptyList'; list.innerHTML='該当する問題がありません'; }
+  else {
+    list.className='problemList';
+    list.innerHTML=browseIndices.map(i=>{
+      const q=QUESTIONS[i];
+      return `<button type="button" class="problemItem" data-index="${i}"><div class="problemNo">#${q.id}</div><div><div class="problemTxt">${escapeHtml(q.question)}</div><div class="problemAns">答え：${escapeHtml(q.answer)}</div></div></button>`;
+    }).join('');
+  }
+  $('browserOverlay').classList.add('show');
+  $('browserOverlay').setAttribute('aria-hidden','false');
+}
+function closeProblemBrowser(){ $('browserOverlay').classList.remove('show'); $('browserOverlay').setAttribute('aria-hidden','true'); }
+function openQuestionFromBrowser(index){
+  browseMode=true;
+  current=index;
+  activeChapter=findChapterIndexByQuestion(index);
+  showingAnswer=false; previewingQuestion=false;
+  closeProblemBrowser(); closeChapterMenu(); closeIncompleteConfirm();
+  render({speak:true});
+}
+function openChapterProblemList(chIndex){
+  const ch=CHAPTERS[chIndex];
+  const indices=[]; for(let i=ch.startIndex;i<=ch.endIndex;i++) indices.push(i);
+  openProblemBrowser(`#${String(ch.id).padStart(2,'0')} ${ch.title}`, indices, '確認モード：問題を選ぶと、その問題だけ確認できます');
+}
+function normalizeSearch(s){ return String(s||'').trim().replace(/\s+/g,''); }
+function keywordSearch(){
+  const key=normalizeSearch($('keywordInput').value);
+  if(!key){ showToast('検索語を入れてください'); return; }
+  const indices=QUESTIONS.map((q,i)=>({q,i})).filter(({q})=> normalizeSearch(q.question).includes(key)||normalizeSearch(q.answer).includes(key)||normalizeSearch(q.period).includes(key)).map(x=>x.i);
+  openProblemBrowser(`検索：${key}`, indices);
+}
+function yearSearch(){
+  const indices=QUESTIONS.map((q,i)=>({q,i})).filter(({q})=> /\d{3,4}年/.test(q.question) || /\d{3,4}年/.test(q.answer)).map(x=>x.i);
+  openProblemBrowser('年号が出る問題', indices, '確認モード：年号を含む問題だけを抽出しています');
+}
+function personSearch(){
+  const indices=QUESTIONS.map((q,i)=>({q,i})).filter(({q})=> /誰|だれ|人物|天皇|将軍|大臣|上皇|皇子|皇后|藩主|商人|学者|作家|歌人|俳人|首相|大統領/.test(q.question)).map(x=>x.i);
+  openProblemBrowser('人名に関する問題', indices, '確認モード：人物を答える問題を中心に抽出しています');
+}
+
 $('menuBtn').addEventListener('click',requestMenu);
 $('closeMenuBtn').addEventListener('click',closeChapterMenu);
 $('continueStudyBtn').addEventListener('click',()=>{
@@ -500,7 +608,13 @@ $('continueStudyBtn').addEventListener('click',()=>{
   if(idx >= 0){ current = idx; showingAnswer=false; previewingQuestion=false; render({speak:true}); }
 });
 $('returnMenuBtn').addEventListener('click',()=>{ closeIncompleteConfirm(); resetSession(); openChapterMenu(); });
-$('chapterGrid').addEventListener('click',(e)=>{ const btn=e.target.closest('.chapterCard'); if(btn) selectChapter(Number(btn.dataset.chapter)); });
+$('chapterGrid').addEventListener('click',(e)=>{ const btn=e.target.closest('.chapterCard'); if(!btn) return; if(suppressChapterClick){ suppressChapterClick=false; return; } selectChapter(Number(btn.dataset.chapter)); });
+let chapterPressTimer=null;
+$('chapterGrid').addEventListener('touchstart',(e)=>{ const btn=e.target.closest('.chapterCard'); if(!btn) return; chapterPressTimer=setTimeout(()=>{ suppressChapterClick=true; openChapterProblemList(Number(btn.dataset.chapter)); },560); },{passive:true});
+$('chapterGrid').addEventListener('touchend',()=>{ clearTimeout(chapterPressTimer); },{passive:true});
+$('chapterGrid').addEventListener('touchcancel',()=>{ clearTimeout(chapterPressTimer); },{passive:true});
+$('chapterGrid').addEventListener('contextmenu',(e)=>{ const btn=e.target.closest('.chapterCard'); if(btn){ e.preventDefault(); openChapterProblemList(Number(btn.dataset.chapter)); } });
+$('chapterGrid').addEventListener('dblclick',(e)=>{ const btn=e.target.closest('.chapterCard'); if(btn){ openChapterProblemList(Number(btn.dataset.chapter)); } });
 $('chapterMenu').addEventListener('click',(e)=>{ if(e.target.id==='chapterMenu') closeChapterMenu(); });
 const hold=$('holdQuestionBtn');
 function startPreview(e){ if(!showingAnswer)return; previewingQuestion=true; render(); e.preventDefault(); }
@@ -512,6 +626,7 @@ window.addEventListener('resize',()=>requestAnimationFrame(fitText));
 $('retryChapterBtn').addEventListener('click',()=>{
   const ch=activeCh();
   closeResult();
+  browseMode=false;
   resetSession();
   current=ch.startIndex; showingAnswer=false; previewingQuestion=false; render({speak:true});
 });
@@ -522,6 +637,13 @@ $('resultMenuBtn').addEventListener('click',()=>{
   current=ch.startIndex; showingAnswer=false; previewingQuestion=false; render();
   openChapterMenu();
 });
+
+$('keywordInput').addEventListener('keydown',(e)=>{ if(e.key==='Enter') keywordSearch(); });
+$('yearSearchBtn').addEventListener('click',yearSearch);
+$('personSearchBtn').addEventListener('click',personSearch);
+$('browserCloseBtn').addEventListener('click',closeProblemBrowser);
+$('browserOverlay').addEventListener('click',(e)=>{ if(e.target.id==='browserOverlay') closeProblemBrowser(); });
+$('problemList').addEventListener('click',(e)=>{ const btn=e.target.closest('.problemItem'); if(btn) openQuestionFromBrowser(Number(btn.dataset.index)); });
 
 $('startStudyBtn').addEventListener('click',()=>{
   $('splashOverlay').classList.add('hide');
