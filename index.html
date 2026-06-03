@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="歴史一問一答">
-<title>歴史733 浅瀬 Ver2.3</title>
+<title>歴史733 浅瀬 Ver2.5</title>
 <style>
 :root {
   --accent:#d32f50;
@@ -97,24 +97,23 @@ body.previewMode .label{color:#7aa5d8;}
 .menuSub{font-size:13px;color:var(--muted);font-weight:800;margin-top:2px;}
 .closeMenu{border:1px solid var(--line);background:#fff;border-radius:999px;min-width:96px;height:42px;font-weight:900;color:#5d5650;}
 .chapterGrid{min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:2px 2px 16px;}
-.chapterCard{border:1px solid var(--line);background:var(--card);border-radius:20px;padding:12px 13px;text-align:left;box-shadow:0 7px 18px rgba(40,30,20,.07);min-height:116px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;-webkit-tap-highlight-color:rgba(211,47,80,.12);touch-action:manipulation;}
+.chapterCard{border:1px solid var(--line);background:var(--card);border-radius:20px;padding:12px 13px;text-align:left;box-shadow:0 7px 18px rgba(40,30,20,.07);min-height:116px;display:grid;grid-template-rows:auto 1fr auto;gap:8px;cursor:pointer;-webkit-tap-highlight-color:rgba(211,47,80,.12);touch-action:manipulation;overflow:hidden;}
 .chapterCard:active{transform:translateY(1px);}
 .chapterCard.active{border-color:rgba(211,47,80,.35);box-shadow:0 0 0 2px rgba(211,47,80,.09) inset,0 7px 18px rgba(40,30,20,.07);}
-.chapterName{font-size:clamp(15px,1.7vw,18px);font-weight:950;color:#2d2925;line-height:1.25;letter-spacing:.02em;}
-.chapterRange{font-size:12px;color:var(--muted);font-weight:850;margin-top:6px;}
-.chapterMeta{display:flex;flex-direction:column;align-items:flex-start;gap:3px;font-size:15px;font-weight:950;color:#736b62;margin-top:10px;min-width:0;}
-.chapterCount{font-size:19px;letter-spacing:.01em;white-space:nowrap;font-weight:1000;line-height:1.05;}
+.chapterName{font-size:clamp(13px,1.45vw,17px);font-weight:950;color:#2d2925;line-height:1.18;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chapterRange{font-size:12px;color:var(--muted);font-weight:850;margin-top:6px;white-space:nowrap;}
+.chapterMeta{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:8px;font-size:13px;font-weight:950;color:#736b62;min-width:0;border-top:1px solid rgba(230,222,212,.62);padding-top:7px;}
+.chapterCount{font-size:clamp(13px,1.45vw,16px);letter-spacing:.01em;white-space:nowrap;font-weight:1000;line-height:1.05;}
 .chapterCount.count-zero{color:#a49b92;}
 .chapterCount.count-low{color:#8a97a8;}
 .chapterCount.count-mid{color:#5fa56b;}
 .chapterCount.count-high{color:#d4a93a;}
 .chapterCount.count-master{color:#d33a50;}
-.chapterLast{white-space:nowrap;color:#8f867d;font-size:14px;font-weight:950;line-height:1.05;}
+.chapterLast{white-space:nowrap;color:#8f867d;font-size:clamp(11px,1.25vw,14px);font-weight:950;line-height:1.05;text-align:right;}
 
-.chapterNum{font-size:clamp(24px,3.1vw,34px);font-weight:1000;color:#d33a50;letter-spacing:.02em;line-height:1;white-space:nowrap;min-width:2.35em;}
-.chapterTop{display:flex;align-items:flex-start;gap:10px;min-width:0;}
+.chapterNum{font-size:clamp(24px,3vw,34px);font-weight:1000;color:#d33a50;letter-spacing:.02em;line-height:1;white-space:nowrap;min-width:2.28em;}
+.chapterTop{display:flex;align-items:flex-start;gap:9px;min-width:0;}
 .chapterInfo{min-width:0;overflow:hidden;}
-.chapterHint{font-size:10px;color:#aaa096;font-weight:850;margin-top:5px;letter-spacing:.02em;}
 .menuTools{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;margin-bottom:12px;align-items:center;}
 .searchInput{height:42px;border:1px solid var(--line);border-radius:999px;background:#fff;padding:0 15px;font-size:15px;font-weight:850;color:#3a3530;outline:none;}
 .toolBtn{height:42px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#554e48;font-size:14px;font-weight:950;padding:0 13px;white-space:nowrap;}
@@ -127,12 +126,13 @@ body.previewMode .label{color:#7aa5d8;}
 .browserSub{font-size:clamp(16px,2.1vw,22px);font-weight:950;color:#50657b;margin-top:7px;letter-spacing:.03em;}
 .browserClose{height:40px;border:1px solid #d5e2ef;background:#fff;border-radius:999px;padding:0 16px;font-weight:950;color:var(--navy);white-space:nowrap;}
 .problemList{overflow:auto;-webkit-overflow-scrolling:touch;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:2px 2px 10px;}
-.problemItem{border:1px solid var(--line);background:#fff;border-radius:17px;text-align:left;padding:11px 12px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:11px;align-items:start;min-height:82px;}
+.problemItem{border:1px solid var(--line);background:#fff;border-radius:17px;text-align:left;padding:11px 12px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;gap:8px 10px;align-items:start;min-height:92px;}
 .problemItem:active{transform:translateY(1px);}
-.problemChapter{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:48px;}
-.problemChapterNo{font-size:18px;font-weight:1000;color:var(--accent);white-space:nowrap;line-height:1;letter-spacing:.02em;}
-.problemChapterName{font-size:10px;font-weight:950;color:#6a7f96;line-height:1.1;max-width:92px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-.problemId{align-self:end;font-size:10px;font-weight:900;color:#b4b0ab;line-height:1;border:1px solid #eee8e0;border-radius:999px;padding:4px 7px;background:#fafafa;white-space:nowrap;}
+.problemMeta{grid-column:1;grid-row:1;display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start;min-width:0;}
+.problemChapterNo{font-size:18px;font-weight:1000;color:var(--accent);white-space:nowrap;line-height:1;letter-spacing:.02em;background:#fff4f6;border:1px solid #f1d5dd;border-radius:999px;padding:4px 8px;}
+.problemChapterName{font-size:12px;font-weight:950;color:#5f748b;line-height:1.18;min-width:0;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.problemBody{grid-column:1;grid-row:2;min-width:0;}
+.problemId{grid-column:2;grid-row:1 / span 2;align-self:end;font-size:10px;font-weight:900;color:#b4b0ab;line-height:1;border:1px solid #eee8e0;border-radius:999px;padding:4px 7px;background:#fafafa;white-space:nowrap;}
 .problemNo{font-size:16px;font-weight:1000;color:var(--navy);white-space:nowrap;line-height:1.25;}
 .problemTxt{font-size:14px;font-weight:850;color:#34302c;line-height:1.36;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
 .problemAns{font-size:12px;font-weight:900;color:#486a9a;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -147,7 +147,7 @@ body.browseMode .browseBackBtn{display:block;}
 body.browseMode #menuBtn{display:none;}
 .browseBackBtn{display:none;width:100%;border:1px solid #d5e2ef;background:#fff;border-radius:18px;min-height:70px;font-weight:950;font-size:18px;color:var(--navy);box-shadow:0 5px 14px rgba(72,106,154,.08);}
 .browseBackBtn:active{transform:translateY(1px);}
-@media (max-height:430px) and (orientation:landscape){.problemList{grid-template-columns:1fr 1fr 1fr}.browserPanel{height:94vh;padding:12px;border-radius:22px}.browserTitle{font-size:22px}.browserSub{font-size:14px}.menuTools{margin-bottom:8px}.searchInput,.toolBtn{height:36px;font-size:12px}.chapterNum{font-size:24px}.problemItem{min-height:74px;padding:9px 10px}.problemChapterNo{font-size:16px}.problemChapterName{font-size:9px}.problemId{font-size:9px;padding:3px 6px}}
+@media (max-height:430px) and (orientation:landscape){.problemList{grid-template-columns:1fr 1fr 1fr}.browserPanel{height:94vh;padding:12px;border-radius:22px}.browserTitle{font-size:22px}.browserSub{font-size:14px}.menuTools{margin-bottom:8px}.searchInput,.toolBtn{height:36px;font-size:12px}.chapterNum{font-size:24px}.problemItem{min-height:74px;padding:9px 10px}.problemChapterNo{font-size:15px;padding:3px 7px}.problemChapterName{font-size:10px}.problemId{font-size:9px;padding:3px 6px}}
 
 .confirmOverlay{position:fixed;inset:0;background:rgba(35,30,25,.28);backdrop-filter:blur(8px);z-index:130;display:none;align-items:center;justify-content:center;padding:24px;}
 .confirmOverlay.show{display:flex;}
@@ -174,7 +174,7 @@ body.browseMode #menuBtn{display:none;}
 .resultBox.rank-bronze .resultStars{color:#5794a9}.resultBox.rank-bronze .resultMedal{background:#eaf6f8;color:#23697d;border-color:#b7dce5;}
 .resultBox.rank-retry .resultStars{color:#7890aa}.resultBox.rank-retry .resultMedal{background:#eef2f6;color:#4d6379;border-color:#cbd8e5;}
 
-@media (max-height:430px) and (orientation:landscape){.chapterGrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.chapterCard{min-height:104px;padding:9px 11px;border-radius:17px}.chapterName{font-size:14px}.chapterRange{font-size:10px}.chapterMeta{font-size:12px;gap:2px}.chapterCount{font-size:16px}.chapterLast{font-size:12px}.menuTitle{font-size:22px}.closeMenu{height:36px}}
+@media (max-height:430px) and (orientation:landscape){.chapterGrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.chapterCard{min-height:104px;padding:9px 11px;border-radius:17px;gap:6px}.chapterName{font-size:13px}.chapterRange{font-size:10px;margin-top:4px}.chapterMeta{font-size:11px;gap:6px;padding-top:5px}.chapterCount{font-size:14px}.chapterLast{font-size:11px}.chapterNum{font-size:23px}.menuTitle{font-size:22px}.closeMenu{height:36px}}
 
 @media (orientation:portrait){#portraitGuard{display:flex;} .app{display:none;}}
 @media (max-height:430px) and (orientation:landscape){
@@ -234,7 +234,7 @@ body.browseMode #menuBtn{display:none;}
   <div class="menuPanel">
     <div class="menuHead">
       <div><div class="menuTitle">チャプター選択</div><div class="menuSub">学習回数と最終学習日はこの端末に保存されます</div></div>
-      <button id="closeMenuBtn" class="closeMenu">閉じる</button>
+      <button id="closeMenuBtn" class="closeMenu">メニュー</button>
     </div>
     <div class="menuTools">
       <input id="keywordInput" class="searchInput" type="search" placeholder="キーワード検索（例：白村江・1853・ペリー）">
@@ -554,7 +554,7 @@ function renderChapterMenu(){
     const active=i===activeChapter ? ' active' : '';
     const num=String(ch.id).padStart(2,'0');
     return `<button type="button" class="chapterCard${active}" data-chapter="${i}" aria-label="チャプター${num} ${escapeHtml(ch.title)}">
-      <div class="chapterTop"><div class="chapterNum">#${num}</div><div class="chapterInfo"><div class="chapterName">${escapeHtml(ch.title)}</div><div class="chapterRange">問題${ch.startId}〜${ch.endId}</div><div class="chapterHint">長押しで問題一覧</div></div></div>
+      <div class="chapterTop"><div class="chapterNum">#${num}</div><div class="chapterInfo"><div class="chapterName">${escapeHtml(ch.title)}</div><div class="chapterRange">問題${ch.startId}〜${ch.endId}</div></div></div>
       <div class="chapterMeta"><span class="chapterCount ${chapterCountClass(rec.count)}">学習 ${Number(rec.count||0)}回</span><span class="chapterLast">${daysAgoLabel(rec.last)}</span></div>
     </button>`;
   }).join('');
@@ -583,8 +583,8 @@ function makeProblemItem(i){
   const q=QUESTIONS[i];
   const ch=chapterLabelForIndex(i);
   return `<button type="button" class="problemItem" data-index="${i}">
-    <div class="problemChapter"><div class="problemChapterNo">#${ch.num}</div><div class="problemChapterName">${escapeHtml(ch.title)}</div></div>
-    <div><div class="problemTxt">${escapeHtml(q.question)}</div><div class="problemAns">答え：${escapeHtml(q.answer)}</div></div>
+    <div class="problemMeta"><div class="problemChapterNo">#${ch.num}</div><div class="problemChapterName">${escapeHtml(ch.title)}</div></div>
+    <div class="problemBody"><div class="problemTxt">${escapeHtml(q.question)}</div><div class="problemAns">答え：${escapeHtml(q.answer)}</div></div>
     <div class="problemId">${q.id}</div>
   </button>`;
 }
@@ -623,7 +623,7 @@ function keywordSearch(){
   const key=normalizeSearch($('keywordInput').value);
   if(!key){ showToast('検索語を入れてください'); return; }
   const indices=QUESTIONS.map((q,i)=>({q,i})).filter(({q})=> normalizeSearch(q.question).includes(key)||normalizeSearch(q.answer).includes(key)||normalizeSearch(q.period).includes(key)).map(x=>x.i);
-  openProblemBrowser(`${key} を含む問題`, indices, `${indices.length}件ヒット`);
+  openProblemBrowser(`「${key}」を含む問題`, indices, `${indices.length}件ヒット`);
 }
 function yearSearch(){
   const indices=QUESTIONS.map((q,i)=>({q,i})).filter(({q})=> /\d{3,4}年/.test(q.question) || /\d{3,4}年/.test(q.answer)).map(x=>x.i);
@@ -676,7 +676,7 @@ $('resultMenuBtn').addEventListener('click',()=>{
 $('keywordInput').addEventListener('keydown',(e)=>{ if(e.key==='Enter') keywordSearch(); });
 $('yearSearchBtn').addEventListener('click',yearSearch);
 $('personSearchBtn').addEventListener('click',personSearch);
-$('browserCloseBtn').addEventListener('click',closeProblemBrowser);
+$('browserCloseBtn').addEventListener('click',(e)=>{ e.preventDefault(); e.stopPropagation(); closeProblemBrowser(); });
 $('browseBackBtn').addEventListener('click',()=>{ openProblemBrowser(browseTitle || '問題一覧', browseIndices, browseSub); });
 $('browserOverlay').addEventListener('click',(e)=>{ if(e.target.id==='browserOverlay') closeProblemBrowser(); });
 $('problemList').addEventListener('click',(e)=>{ const btn=e.target.closest('.problemItem'); if(btn) openQuestionFromBrowser(Number(btn.dataset.index)); });
