@@ -298,8 +298,9 @@ body.browseMode #menuBtn{display:none;}
     <div id="resultMedal" class="resultMedal">ブロンズ</div>
     <div id="resultComment" class="resultComment">がんばったね</div>
     <div class="resultBtns">
-      <button id="retryChapterBtn" class="resultBtn primary">もう一回</button>
-      <button id="resultMenuBtn" class="resultBtn">メニューへ</button>
+      <button id="goCheckBtn" class="resultBtn primary">要チェックへ</button>
+      <button id="retryChapterBtn" class="resultBtn">もう一回</button>
+      <button id="resultMenuBtn" class="resultBtn">チャプター選択</button>
     </div>
   </div>
 </div>
@@ -539,13 +540,21 @@ function showResult(ch){
   $('resultComment').textContent=rank.comment;
   $('resultOverlay').classList.add('show');
   $('resultOverlay').setAttribute('aria-hidden','false');
+  pendingResultChapterId=ch.id;
   if(resultAutoTimer) clearTimeout(resultAutoTimer);
-  resultAutoTimer = setTimeout(()=>{ closeResult(); openCheckList(ch); }, 1800);
+  resultAutoTimer = setTimeout(()=>{ goToCheckList(); }, 1600);
 }
 function closeResult(){
   if(resultAutoTimer){ clearTimeout(resultAutoTimer); resultAutoTimer=null; }
   $('resultOverlay').classList.remove('show');
   $('resultOverlay').setAttribute('aria-hidden','true');
+}
+function goToCheckList(){
+  if(resultAutoTimer){ clearTimeout(resultAutoTimer); resultAutoTimer=null; }
+  const ch = CHAPTERS.find(c=>c.id===pendingResultChapterId) || activeCh();
+  $('resultOverlay').classList.remove('show');
+  $('resultOverlay').setAttribute('aria-hidden','true');
+  requestAnimationFrame(()=>openCheckList(ch));
 }
 function makeCheckItem(i){
   const q=QUESTIONS[i];
@@ -738,6 +747,7 @@ hold.addEventListener('touchstart',startPreview,{passive:false}); hold.addEventL
 hold.addEventListener('mousedown',startPreview); window.addEventListener('mouseup',()=>{ if(previewingQuestion) endPreview(new Event('mouseup')); });
 window.addEventListener('resize',()=>requestAnimationFrame(fitText));
 
+$('goCheckBtn').addEventListener('click',()=>{ goToCheckList(); });
 $('retryChapterBtn').addEventListener('click',()=>{
   const ch=activeCh();
   closeResult();
