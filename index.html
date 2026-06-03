@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="歴史一問一答">
-<title>歴史733 Ver 2.7.3</title>
+<title>歴史733 Ver 2.7.4</title>
 <style>
 :root {
   --accent:#d32f50;
@@ -157,8 +157,9 @@ body.browseMode #menuBtn{display:none;}
 .confirmBtns{display:flex;gap:14px;justify-content:center;}
 .confirmBtn{border:1px solid var(--line);background:#fff;border-radius:18px;min-width:150px;height:54px;font-size:16px;font-weight:950;color:#5d5650;}
 .confirmBtn.primary{border:0;background:var(--accent);color:#fff;box-shadow:0 8px 18px rgba(211,47,80,.18);}
-.resultOverlay{position:fixed;inset:0;background:rgba(245,242,236,.96);backdrop-filter:blur(10px);z-index:135;display:none;align-items:center;justify-content:center;padding:24px;pointer-events:auto;}
-.resultOverlay.show{display:flex;}
+.resultOverlay{position:fixed;inset:0;background:rgba(245,242,236,.96);backdrop-filter:blur(10px);z-index:135;display:none;align-items:center;justify-content:center;padding:24px;pointer-events:auto;opacity:0;transition:opacity .42s ease;}
+.resultOverlay.show{display:flex;opacity:1;}
+.resultOverlay.fading{opacity:0;}
 .resultBox{width:min(620px,92vw);background:var(--card);border:1px solid var(--line);border-radius:30px;box-shadow:var(--shadow);padding:28px 32px;text-align:center;}
 .resultChapter{font-size:18px;font-weight:950;color:var(--accent);letter-spacing:.05em;margin-bottom:6px;}
 .resultTitle{font-size:30px;font-weight:950;color:var(--ink);letter-spacing:.05em;margin-bottom:8px;}
@@ -175,13 +176,14 @@ body.browseMode #menuBtn{display:none;}
 .resultBox.rank-bronze .resultStars{color:#5794a9}.resultBox.rank-bronze .resultMedal{background:#eaf6f8;color:#23697d;border-color:#b7dce5;}
 .resultBox.rank-retry .resultStars{color:#7890aa}.resultBox.rank-retry .resultMedal{background:#eef2f6;color:#4d6379;border-color:#cbd8e5;}
 
-.checkOverlay{position:fixed;inset:0;background:rgba(242,247,250,.98);z-index:138;display:none;padding:max(10px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));}
-.checkOverlay.show{display:flex;align-items:center;justify-content:center;}
+.checkOverlay{position:fixed;inset:0;background:rgba(242,247,250,.98);z-index:138;display:none;padding:max(10px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));opacity:0;transition:opacity .42s ease;}
+.checkOverlay.show{display:flex;align-items:center;justify-content:center;opacity:1;}
 .checkPanel{width:min(1000px,96vw);height:min(650px,92vh);background:rgba(255,255,255,.9);border:1px solid #dce8f1;border-radius:30px;box-shadow:var(--shadow);padding:18px;display:grid;grid-template-rows:auto 1fr;gap:12px;}
 .checkHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
 .checkTitle{font-size:clamp(30px,4.2vw,44px);font-weight:1000;color:var(--navy);line-height:1.08;letter-spacing:.04em;}
 .checkSub{font-size:clamp(14px,2vw,20px);font-weight:950;color:#5b7188;margin-top:7px;letter-spacing:.03em;}
-.checkClose{height:40px;border:1px solid #d5e2ef;background:#fff;border-radius:999px;padding:0 16px;font-weight:950;color:var(--navy);white-space:nowrap;}
+.checkCount{display:inline-block;margin-left:14px;font-size:clamp(28px,4vw,44px);font-weight:1000;color:var(--accent);letter-spacing:.02em;vertical-align:baseline;}
+.checkClose{display:none;}
 .checkList{overflow:auto;-webkit-overflow-scrolling:touch;padding:2px 4px 12px;}
 .checkItem{background:#fff;border:1px solid #dce8f1;border-radius:20px;padding:15px 18px;margin-bottom:10px;box-shadow:0 6px 16px rgba(72,106,154,.06);}
 .checkMeta{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
@@ -191,7 +193,7 @@ body.browseMode #menuBtn{display:none;}
 .checkProblemId{font-size:10px;color:#b4b0ab;font-weight:900;text-align:right;margin-top:6px;}
 .checkEmpty{height:100%;display:flex;align-items:center;justify-content:center;text-align:center;color:#5b7188;font-weight:950;font-size:22px;}
 .checkFooter{padding:18px 0 4px;text-align:center;}
-.checkFooterTitle{font-size:18px;font-weight:950;color:#5b7188;margin-bottom:12px;}
+
 .checkFooterBtns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
 .checkAction{border:1px solid #d5e2ef;background:#fff;border-radius:18px;min-width:150px;height:54px;font-size:16px;font-weight:950;color:var(--navy);}
 .checkAction.primary{border:0;background:var(--accent);color:#fff;box-shadow:0 8px 18px rgba(211,47,80,.16);}
@@ -220,7 +222,7 @@ body.browseMode #menuBtn{display:none;}
     <div class="splashTitle">歴史<span class="num">733</span></div>
     <div class="splashCopy">今日も少し進めよう</div>
     <button id="startStudyBtn" class="startStudyBtn">学習を始める</button>
-    <div class="splashFoot">Ver 2.7.3</div>
+    <div class="splashFoot">Ver 2.7.4</div>
   </div>
 </div>
 
@@ -540,23 +542,28 @@ function showResult(ch){
   $('resultComment').textContent=rank.comment;
   pendingResultChapterId=ch.id;
   const overlay=$('resultOverlay');
+  overlay.classList.remove('fading');
   overlay.classList.add('show');
   overlay.setAttribute('aria-hidden','false');
   if(resultAutoTimer) clearTimeout(resultAutoTimer);
 
   // 結果画面は「終点」ではなく、短い中継画面。Safariでも止まらないよう遷移を一箇所に集約。
-  resultAutoTimer = window.setTimeout(transitionResultToCheckList, 1200);
+  resultAutoTimer = window.setTimeout(transitionResultToCheckList, 2500);
 }
 function transitionResultToCheckList(){
   if(resultAutoTimer){ clearTimeout(resultAutoTimer); resultAutoTimer=null; }
   const ch = CHAPTERS.find(c=>c.id===pendingResultChapterId) || activeCh();
-  hideResultOverlay();
-  window.requestAnimationFrame(()=>openCheckList(ch));
+  const overlay=$('resultOverlay');
+  overlay.classList.add('fading');
+  window.setTimeout(()=>{
+    hideResultOverlay();
+    window.requestAnimationFrame(()=>openCheckList(ch));
+  }, 430);
 }
 function closeResult(){ transitionResultToCheckList(); }
 function hideResultOverlay(){
   const overlay=$('resultOverlay');
-  overlay.classList.remove('show');
+  overlay.classList.remove('show','fading');
   overlay.setAttribute('aria-hidden','true');
 }
 function forceOpenCheckList(ch){
@@ -580,8 +587,8 @@ function openCheckList(ch){
   for(let i=ch.startIndex;i<=ch.endIndex;i++){
     if(sessionResults[QUESTIONS[i].id]==='ng') indices.push(i);
   }
-  $('checkTitle').textContent='要チェック問題';
-  $('checkSub').textContent = indices.length ? `#${String(ch.id).padStart(2,'0')} ${ch.title}　${indices.length}問` : `#${String(ch.id).padStart(2,'0')} ${ch.title}　要チェックなし`;
+  $('checkTitle').innerHTML=`要チェック問題 <span class="checkCount">${indices.length}問</span>`;
+  $('checkSub').textContent = `#${String(ch.id).padStart(2,'0')} ${ch.title}`;
   const list=$('checkList');
   if(!indices.length){
     list.className='checkList';
@@ -597,7 +604,6 @@ function closeCheckList(){ $('checkOverlay').classList.remove('show'); $('checkO
 function checkFooterHtml(ch){
   const nextId = ch.id < CHAPTERS.length ? ch.id + 1 : 1;
   return `<div class="checkFooter">
-    <div class="checkFooterTitle">次はどうする？</div>
     <div class="checkFooterBtns">
       <button type="button" class="checkAction primary" data-check-action="retry">もう一度挑戦</button>
       <button type="button" class="checkAction" data-check-action="next">次のチャプター</button>
