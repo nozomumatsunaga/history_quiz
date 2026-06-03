@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="歴史一問一答">
-<title>歴史733 Ver2 浅瀬</title>
+<title>歴史733 浅瀬 Ver2.2</title>
 <style>
 :root {
   --accent:#d32f50;
@@ -19,8 +19,11 @@
   --green:#14965f;
   --red:#d64242;
   --shadow: 0 14px 35px rgba(40,30,20,.13);
+  --pale-blue:#F2F7FA;
+  --navy:#486a9a;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color: transparent;}
+.noSelect,.chapterCard,.problemItem{ -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; }
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;color:var(--ink);}
 button{font-family:inherit;touch-action:manipulation;}
 #portraitGuard{display:none;position:fixed;inset:0;background:var(--bg);z-index:99;align-items:center;justify-content:center;text-align:center;padding:28px;}
@@ -94,44 +97,50 @@ body.previewMode .label{color:#7aa5d8;}
 .menuSub{font-size:13px;color:var(--muted);font-weight:800;margin-top:2px;}
 .closeMenu{border:1px solid var(--line);background:#fff;border-radius:999px;min-width:96px;height:42px;font-weight:900;color:#5d5650;}
 .chapterGrid{min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:2px 2px 16px;}
-.chapterCard{border:1px solid var(--line);background:var(--card);border-radius:20px;padding:13px 14px;text-align:left;box-shadow:0 7px 18px rgba(40,30,20,.07);min-height:98px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;-webkit-tap-highlight-color:rgba(211,47,80,.12);touch-action:manipulation;}
+.chapterCard{border:1px solid var(--line);background:var(--card);border-radius:20px;padding:12px 13px;text-align:left;box-shadow:0 7px 18px rgba(40,30,20,.07);min-height:116px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;-webkit-tap-highlight-color:rgba(211,47,80,.12);touch-action:manipulation;}
 .chapterCard:active{transform:translateY(1px);}
 .chapterCard.active{border-color:rgba(211,47,80,.35);box-shadow:0 0 0 2px rgba(211,47,80,.09) inset,0 7px 18px rgba(40,30,20,.07);}
 .chapterName{font-size:clamp(15px,1.7vw,18px);font-weight:950;color:#2d2925;line-height:1.25;letter-spacing:.02em;}
 .chapterRange{font-size:12px;color:var(--muted);font-weight:850;margin-top:6px;}
-.chapterMeta{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px;font-weight:950;color:#736b62;margin-top:10px;}
-.chapterCount{font-size:20px;letter-spacing:.01em;white-space:nowrap;min-width:5.5em;font-weight:1000;}
+.chapterMeta{display:flex;flex-direction:column;align-items:flex-start;gap:3px;font-size:15px;font-weight:950;color:#736b62;margin-top:10px;min-width:0;}
+.chapterCount{font-size:19px;letter-spacing:.01em;white-space:nowrap;font-weight:1000;line-height:1.05;}
 .chapterCount.count-zero{color:#a49b92;}
 .chapterCount.count-low{color:#8a97a8;}
 .chapterCount.count-mid{color:#5fa56b;}
 .chapterCount.count-high{color:#d4a93a;}
 .chapterCount.count-master{color:#d33a50;}
-.chapterLast{white-space:nowrap;color:#8f867d;font-size:15px;font-weight:950;}
+.chapterLast{white-space:nowrap;color:#8f867d;font-size:14px;font-weight:950;line-height:1.05;}
 
-.chapterNum{font-size:clamp(24px,3.1vw,34px);font-weight:1000;color:#d33a50;letter-spacing:.02em;line-height:1;white-space:nowrap;min-width:2.4em;}
-.chapterTop{display:flex;align-items:flex-start;gap:12px;}
-.chapterInfo{min-width:0;}
+.chapterNum{font-size:clamp(24px,3.1vw,34px);font-weight:1000;color:#d33a50;letter-spacing:.02em;line-height:1;white-space:nowrap;min-width:2.35em;}
+.chapterTop{display:flex;align-items:flex-start;gap:10px;min-width:0;}
+.chapterInfo{min-width:0;overflow:hidden;}
 .chapterHint{font-size:10px;color:#aaa096;font-weight:850;margin-top:5px;letter-spacing:.02em;}
 .menuTools{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;margin-bottom:12px;align-items:center;}
 .searchInput{height:42px;border:1px solid var(--line);border-radius:999px;background:#fff;padding:0 15px;font-size:15px;font-weight:850;color:#3a3530;outline:none;}
 .toolBtn{height:42px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#554e48;font-size:14px;font-weight:950;padding:0 13px;white-space:nowrap;}
 .toolBtn:active{transform:translateY(1px);}
-.browserOverlay{position:fixed;inset:0;background:rgba(245,242,236,.96);z-index:80;display:none;padding:max(10px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));}
+.browserOverlay{position:fixed;inset:0;background:rgba(242,247,250,.97);z-index:80;display:none;padding:max(10px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));}
 .browserOverlay.show{display:flex;align-items:center;justify-content:center;}
-.browserPanel{width:min(1000px,96vw);height:min(650px,92vh);background:var(--card);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);padding:18px;display:grid;grid-template-rows:auto 1fr;gap:12px;}
+.browserPanel{width:min(1000px,96vw);height:min(650px,92vh);background:rgba(255,255,255,.88);border:1px solid #dce8f1;border-radius:28px;box-shadow:var(--shadow);padding:18px;display:grid;grid-template-rows:auto 1fr;gap:12px;}
 .browserHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
-.browserTitle{font-size:26px;font-weight:1000;color:#2f2b27;line-height:1.15;}
-.browserSub{font-size:12px;font-weight:850;color:#8b837b;margin-top:5px;}
+.browserTitle{font-size:clamp(30px,4.2vw,44px);font-weight:1000;color:var(--navy);line-height:1.08;letter-spacing:.03em;}
+.browserSub{font-size:clamp(16px,2.1vw,22px);font-weight:950;color:#50657b;margin-top:7px;letter-spacing:.03em;}
 .browserClose{height:40px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:0 16px;font-weight:950;color:#5b554f;}
 .problemList{overflow:auto;-webkit-overflow-scrolling:touch;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:2px 2px 10px;}
 .problemItem{border:1px solid var(--line);background:#fff;border-radius:16px;text-align:left;padding:11px 12px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;min-height:72px;}
 .problemItem:active{transform:translateY(1px);}
-.problemNo{font-size:16px;font-weight:1000;color:#d33a50;white-space:nowrap;line-height:1.25;}
+.problemNo{font-size:16px;font-weight:1000;color:var(--navy);white-space:nowrap;line-height:1.25;}
 .problemTxt{font-size:14px;font-weight:850;color:#34302c;line-height:1.36;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
 .problemAns{font-size:12px;font-weight:900;color:#486a9a;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .emptyList{height:100%;display:flex;align-items:center;justify-content:center;text-align:center;color:#928a82;font-weight:900;font-size:18px;}
-body.browseMode .period{color:#486a9a;}
+body.browseMode{background:var(--pale-blue);}
+body.browseMode .app{background:var(--pale-blue);}
+body.browseMode .period{color:var(--navy);font-size:clamp(28px,3.9vw,42px);letter-spacing:.08em;}
 body.browseMode .remainPill{background:#f5f5f7;color:#6a625a;border-color:#e5e1dc;}
+body.browseMode .rateBox{display:none;}
+body.browseMode .browseBackBtn{display:block;}
+.browseBackBtn{display:none;width:100%;border:1px solid #d5e2ef;background:#fff;border-radius:18px;min-height:70px;font-weight:950;font-size:18px;color:var(--navy);box-shadow:0 5px 14px rgba(72,106,154,.08);}
+.browseBackBtn:active{transform:translateY(1px);}
 @media (max-height:430px) and (orientation:landscape){.problemList{grid-template-columns:1fr 1fr 1fr}.browserPanel{height:94vh;padding:12px;border-radius:22px}.browserTitle{font-size:22px}.menuTools{margin-bottom:8px}.searchInput,.toolBtn{height:36px;font-size:12px}.chapterNum{font-size:24px}}
 
 .confirmOverlay{position:fixed;inset:0;background:rgba(35,30,25,.28);backdrop-filter:blur(8px);z-index:130;display:none;align-items:center;justify-content:center;padding:24px;}
@@ -159,7 +168,7 @@ body.browseMode .remainPill{background:#f5f5f7;color:#6a625a;border-color:#e5e1d
 .resultBox.rank-bronze .resultStars{color:#5794a9}.resultBox.rank-bronze .resultMedal{background:#eaf6f8;color:#23697d;border-color:#b7dce5;}
 .resultBox.rank-retry .resultStars{color:#7890aa}.resultBox.rank-retry .resultMedal{background:#eef2f6;color:#4d6379;border-color:#cbd8e5;}
 
-@media (max-height:430px) and (orientation:landscape){.chapterGrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.chapterCard{min-height:84px;padding:10px 12px;border-radius:17px}.chapterName{font-size:14px}.chapterRange,.chapterMeta{font-size:10px}.menuTitle{font-size:22px}.closeMenu{height:36px}}
+@media (max-height:430px) and (orientation:landscape){.chapterGrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.chapterCard{min-height:104px;padding:9px 11px;border-radius:17px}.chapterName{font-size:14px}.chapterRange{font-size:10px}.chapterMeta{font-size:12px;gap:2px}.chapterCount{font-size:16px}.chapterLast{font-size:12px}.menuTitle{font-size:22px}.closeMenu{height:36px}}
 
 @media (orientation:portrait){#portraitGuard{display:flex;} .app{display:none;}}
 @media (max-height:430px) and (orientation:landscape){
@@ -208,6 +217,7 @@ body.browseMode .remainPill{background:#f5f5f7;color:#6a625a;border-color:#e5e1d
       </div>
       <div class="stats">
         <div id="statLine" class="rateBox"><div class="rateLabel">正解率</div><div id="rateValue" class="rateValue rate-none">--%</div></div>
+        <button id="browseBackBtn" class="browseBackBtn">リストに戻る</button>
         <div class="smallRow"><button id="prevBtn" class="navBtn">戻る</button><button id="nextBtn" class="navBtn">次へ</button></div>
       </div>
     </aside>
@@ -391,7 +401,7 @@ function speak(text){
 function render(opts={}){
   const q=QUESTIONS[current];
   const ch=activeCh();
-  $('period').textContent=browseMode ? '確認モード' : ch.title;
+  $('period').textContent=browseMode ? '確認' : ch.title;
   $('qidPill').textContent=`問題${q.id}`;
   $('remainPill').textContent=browseMode ? '履歴なし' : `残り${remainingCount()}問`;
   const isAnswer = showingAnswer && !previewingQuestion;
@@ -552,11 +562,12 @@ function closeIncompleteConfirm(){ $('confirmOverlay').classList.remove('show');
 function closeChapterMenu(){ $('chapterMenu').classList.remove('show'); $('chapterMenu').setAttribute('aria-hidden','true'); }
 function selectChapter(i){ browseMode=false; activeChapter=i; current=CHAPTERS[i].startIndex; showingAnswer=false; previewingQuestion=false; resetSession(); saveChapterState(); closeChapterMenu(); render({speak:true}); }
 
-function openProblemBrowser(title, indices, sub='確認モード：ここから開いた問題は学習履歴にカウントしません'){
+function openProblemBrowser(title, indices, sub=''){
   browseIndices = Array.from(new Set(indices)).filter(i=>i>=0 && i<QUESTIONS.length);
   browseTitle = title;
+  browseSub = sub || `${browseIndices.length}件`;
   $('browserTitle').textContent = title;
-  $('browserSub').textContent = sub;
+  $('browserSub').textContent = browseSub;
   const list=$('problemList');
   if(!browseIndices.length){ list.className='emptyList'; list.innerHTML='該当する問題がありません'; }
   else {
@@ -581,22 +592,22 @@ function openQuestionFromBrowser(index){
 function openChapterProblemList(chIndex){
   const ch=CHAPTERS[chIndex];
   const indices=[]; for(let i=ch.startIndex;i<=ch.endIndex;i++) indices.push(i);
-  openProblemBrowser(`#${String(ch.id).padStart(2,'0')} ${ch.title}`, indices, '確認モード：問題を選ぶと、その問題だけ確認できます');
+  openProblemBrowser(`#${String(ch.id).padStart(2,'0')} ${ch.title}`, indices, `この章の問題　${indices.length}件`);
 }
 function normalizeSearch(s){ return String(s||'').trim().replace(/\s+/g,''); }
 function keywordSearch(){
   const key=normalizeSearch($('keywordInput').value);
   if(!key){ showToast('検索語を入れてください'); return; }
   const indices=QUESTIONS.map((q,i)=>({q,i})).filter(({q})=> normalizeSearch(q.question).includes(key)||normalizeSearch(q.answer).includes(key)||normalizeSearch(q.period).includes(key)).map(x=>x.i);
-  openProblemBrowser(`検索：${key}`, indices);
+  openProblemBrowser(`検索：${key}`, indices, `${indices.length}件ヒット`);
 }
 function yearSearch(){
   const indices=QUESTIONS.map((q,i)=>({q,i})).filter(({q})=> /\d{3,4}年/.test(q.question) || /\d{3,4}年/.test(q.answer)).map(x=>x.i);
-  openProblemBrowser('年号が出る問題', indices, '確認モード：年号を含む問題だけを抽出しています');
+  openProblemBrowser('年号問題', indices, `${indices.length}件`);
 }
 function personSearch(){
   const indices=QUESTIONS.map((q,i)=>({q,i})).filter(({q})=> /誰|だれ|人物|天皇|将軍|大臣|上皇|皇子|皇后|藩主|商人|学者|作家|歌人|俳人|首相|大統領/.test(q.question)).map(x=>x.i);
-  openProblemBrowser('人名に関する問題', indices, '確認モード：人物を答える問題を中心に抽出しています');
+  openProblemBrowser('人名問題', indices, `${indices.length}件`);
 }
 
 $('menuBtn').addEventListener('click',requestMenu);
@@ -642,6 +653,7 @@ $('keywordInput').addEventListener('keydown',(e)=>{ if(e.key==='Enter') keywordS
 $('yearSearchBtn').addEventListener('click',yearSearch);
 $('personSearchBtn').addEventListener('click',personSearch);
 $('browserCloseBtn').addEventListener('click',closeProblemBrowser);
+$('browseBackBtn').addEventListener('click',()=>{ openProblemBrowser(browseTitle || '問題一覧', browseIndices, browseSub); });
 $('browserOverlay').addEventListener('click',(e)=>{ if(e.target.id==='browserOverlay') closeProblemBrowser(); });
 $('problemList').addEventListener('click',(e)=>{ const btn=e.target.closest('.problemItem'); if(btn) openQuestionFromBrowser(Number(btn.dataset.index)); });
 
