@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="歴史一問一答">
-<title>歴史733 Ver 2.7.4</title>
+<title>歴史733 Ver 2.7.5</title>
 <style>
 :root {
   --accent:#d32f50;
@@ -167,7 +167,8 @@ body.browseMode #menuBtn{display:none;}
 .resultStars{font-size:34px;letter-spacing:.08em;font-weight:950;margin:8px 0 4px;}
 .resultMedal{display:inline-block;border-radius:999px;padding:7px 18px;font-size:16px;font-weight:950;margin:6px 0 12px;border:1px solid transparent;}
 .resultComment{font-size:18px;font-weight:900;line-height:1.55;color:#4f4841;margin:10px auto 16px;min-height:1.5em;}
-.resultAutoNote{display:inline-block;border:1px solid #dbe6ef;background:#f2f7fa;color:var(--navy);border-radius:999px;padding:8px 18px;font-size:15px;font-weight:950;}
+.resultCheckSummary{display:inline-flex;align-items:baseline;gap:10px;border:1px solid #dbe6ef;background:#f2f7fa;color:var(--navy);border-radius:999px;padding:8px 18px;font-size:15px;font-weight:950;margin:4px 0 18px;}
+.resultCheckSummary .resultCheckCount{font-size:22px;color:var(--accent);font-weight:950;}
 .resultBtns{display:flex;gap:14px;justify-content:center;}
 .resultBtn{border:1px solid var(--line);background:#fff;border-radius:18px;min-width:150px;height:54px;font-size:16px;font-weight:950;color:#5d5650;}
 .resultBtn.primary{border:0;background:var(--accent);color:#fff;box-shadow:0 8px 18px rgba(211,47,80,.18);}
@@ -222,7 +223,7 @@ body.browseMode #menuBtn{display:none;}
     <div class="splashTitle">歴史<span class="num">733</span></div>
     <div class="splashCopy">今日も少し進めよう</div>
     <button id="startStudyBtn" class="startStudyBtn">学習を始める</button>
-    <div class="splashFoot">Ver 2.7.4</div>
+    <div class="splashFoot">Ver 2.7.5</div>
   </div>
 </div>
 
@@ -300,7 +301,12 @@ body.browseMode #menuBtn{display:none;}
     <div id="resultStars" class="resultStars">★★★☆☆</div>
     <div id="resultMedal" class="resultMedal">ブロンズ</div>
     <div id="resultComment" class="resultComment">がんばったね</div>
-    <div id="resultAutoNote" class="resultAutoNote">要チェック問題へ進みます</div>
+    <div id="resultCheckSummary" class="resultCheckSummary">要チェック <span id="resultCheckCount" class="resultCheckCount">0問</span></div>
+    <div class="resultBtns">
+      <button id="resultCheckBtn" class="resultBtn primary" type="button">要チェック問題</button>
+      <button id="resultRetryBtn" class="resultBtn" type="button">もう一回</button>
+      <button id="resultMenuBtn" class="resultBtn" type="button">チャプター選択</button>
+    </div>
   </div>
 </div>
 
@@ -311,7 +317,7 @@ body.browseMode #menuBtn{display:none;}
         <div id="checkTitle" class="checkTitle">要チェック問題</div>
         <div id="checkSub" class="checkSub">0問</div>
       </div>
-      <button id="checkToMenuTopBtn" class="checkClose">チャプターへ</button>
+
     </div>
     <div id="checkList" class="checkList"></div>
   </div>
@@ -540,15 +546,17 @@ function showResult(ch){
   $('resultStars').textContent=rank.stars;
   $('resultMedal').textContent=rank.medal;
   $('resultComment').textContent=rank.comment;
+  let ng=0;
+  for(let i=ch.startIndex;i<=ch.endIndex;i++){
+    if(sessionResults[QUESTIONS[i].id]==='ng') ng++;
+  }
+  $('resultCheckCount').textContent=`${ng}問`;
   pendingResultChapterId=ch.id;
   const overlay=$('resultOverlay');
   overlay.classList.remove('fading');
   overlay.classList.add('show');
   overlay.setAttribute('aria-hidden','false');
-  if(resultAutoTimer) clearTimeout(resultAutoTimer);
-
-  // 結果画面は「終点」ではなく、短い中継画面。Safariでも止まらないよう遷移を一箇所に集約。
-  resultAutoTimer = window.setTimeout(transitionResultToCheckList, 2500);
+  if(resultAutoTimer){ clearTimeout(resultAutoTimer); resultAutoTimer=null; }
 }
 function transitionResultToCheckList(){
   if(resultAutoTimer){ clearTimeout(resultAutoTimer); resultAutoTimer=null; }
@@ -772,9 +780,12 @@ $('browserOverlay').addEventListener('click',(e)=>{ if(e.target.id==='browserOve
 $('problemList').addEventListener('click',(e)=>{ const btn=e.target.closest('.problemItem'); if(btn) openQuestionFromBrowser(Number(btn.dataset.index)); });
 
 
-$('checkToMenuTopBtn').addEventListener('click',()=>{ closeCheckList(); resetSession(); openChapterMenu(); });
 
-$('resultOverlay').addEventListener('click',()=>{ transitionResultToCheckList(); });
+
+$('resultCheckBtn').addEventListener('click',(e)=>{ e.preventDefault(); e.stopPropagation(); transitionResultToCheckList(); });
+$('resultRetryBtn').addEventListener('click',(e)=>{ e.preventDefault(); e.stopPropagation(); const ch=CHAPTERS.find(c=>c.id===pendingResultChapterId) || activeCh(); hideResultOverlay(); activeChapter=Math.max(0,CHAPTERS.findIndex(c=>c.id===ch.id)); resetSession(); current=ch.startIndex; showingAnswer=false; previewingQuestion=false; render({speak:true}); });
+$('resultMenuBtn').addEventListener('click',(e)=>{ e.preventDefault(); e.stopPropagation(); hideResultOverlay(); resetSession(); openChapterMenu(); });
+
 $('checkList').addEventListener('click',(e)=>{
   const btn=e.target.closest('[data-check-action]');
   if(!btn) return;
