@@ -174,6 +174,28 @@ body.browseMode #menuBtn{display:none;}
 .resultBox.rank-bronze .resultStars{color:#5794a9}.resultBox.rank-bronze .resultMedal{background:#eaf6f8;color:#23697d;border-color:#b7dce5;}
 .resultBox.rank-retry .resultStars{color:#7890aa}.resultBox.rank-retry .resultMedal{background:#eef2f6;color:#4d6379;border-color:#cbd8e5;}
 
+.checkOverlay{position:fixed;inset:0;background:rgba(242,247,250,.98);z-index:138;display:none;padding:max(10px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));}
+.checkOverlay.show{display:flex;align-items:center;justify-content:center;}
+.checkPanel{width:min(1000px,96vw);height:min(650px,92vh);background:rgba(255,255,255,.9);border:1px solid #dce8f1;border-radius:30px;box-shadow:var(--shadow);padding:18px;display:grid;grid-template-rows:auto 1fr;gap:12px;}
+.checkHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.checkTitle{font-size:clamp(30px,4.2vw,44px);font-weight:1000;color:var(--navy);line-height:1.08;letter-spacing:.04em;}
+.checkSub{font-size:clamp(14px,2vw,20px);font-weight:950;color:#5b7188;margin-top:7px;letter-spacing:.03em;}
+.checkClose{height:40px;border:1px solid #d5e2ef;background:#fff;border-radius:999px;padding:0 16px;font-weight:950;color:var(--navy);white-space:nowrap;}
+.checkList{overflow:auto;-webkit-overflow-scrolling:touch;padding:2px 4px 12px;}
+.checkItem{background:#fff;border:1px solid #dce8f1;border-radius:20px;padding:15px 18px;margin-bottom:10px;box-shadow:0 6px 16px rgba(72,106,154,.06);}
+.checkMeta{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.checkChapterNo{font-size:18px;font-weight:1000;color:var(--accent);background:#fff4f6;border:1px solid #f1d5dd;border-radius:999px;padding:4px 9px;line-height:1;}
+.checkChapterName{font-size:13px;font-weight:950;color:#5f748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.checkQuestion{font-size:clamp(16px,2.15vw,22px);line-height:1.55;font-weight:900;color:#2f2b27;}
+.checkProblemId{font-size:10px;color:#b4b0ab;font-weight:900;text-align:right;margin-top:6px;}
+.checkEmpty{height:100%;display:flex;align-items:center;justify-content:center;text-align:center;color:#5b7188;font-weight:950;font-size:22px;}
+.checkFooter{padding:18px 0 4px;text-align:center;}
+.checkFooterTitle{font-size:18px;font-weight:950;color:#5b7188;margin-bottom:12px;}
+.checkFooterBtns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.checkAction{border:1px solid #d5e2ef;background:#fff;border-radius:18px;min-width:150px;height:54px;font-size:16px;font-weight:950;color:var(--navy);}
+.checkAction.primary{border:0;background:var(--accent);color:#fff;box-shadow:0 8px 18px rgba(211,47,80,.16);}
+@media (max-height:430px) and (orientation:landscape){.checkPanel{height:94vh;padding:12px;border-radius:22px}.checkTitle{font-size:24px}.checkSub{font-size:14px}.checkItem{padding:10px 12px;border-radius:16px;margin-bottom:8px}.checkQuestion{font-size:14px;line-height:1.42}.checkFooter{padding-top:12px}.checkAction{height:42px;font-size:13px;min-width:120px}}
+
 @media (max-height:430px) and (orientation:landscape){.chapterGrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.chapterCard{min-height:104px;padding:9px 11px;border-radius:17px;gap:6px}.chapterName{font-size:13px}.chapterRange{font-size:10px;margin-top:4px}.chapterMeta{font-size:11px;gap:6px;padding-top:5px}.chapterCount{font-size:14px}.chapterLast{font-size:11px}.chapterNum{font-size:23px}.menuTitle{font-size:22px}.closeMenu{height:36px}}
 
 @media (orientation:portrait){#portraitGuard{display:flex;} .app{display:none;}}
@@ -279,6 +301,19 @@ body.browseMode #menuBtn{display:none;}
       <button id="retryChapterBtn" class="resultBtn primary">もう一回</button>
       <button id="resultMenuBtn" class="resultBtn">メニューへ</button>
     </div>
+  </div>
+</div>
+
+<div id="checkOverlay" class="checkOverlay" aria-hidden="true">
+  <div class="checkPanel">
+    <div class="checkHead">
+      <div>
+        <div id="checkTitle" class="checkTitle">要チェック問題</div>
+        <div id="checkSub" class="checkSub">0問</div>
+      </div>
+      <button id="checkToMenuTopBtn" class="checkClose">チャプターへ</button>
+    </div>
+    <div id="checkList" class="checkList"></div>
   </div>
 </div>
 
@@ -496,7 +531,7 @@ function showResult(ch){
   const rank=getResultRank(rate);
   const box=$('resultBox');
   box.className='resultBox '+rank.cls;
-  $('resultChapter').textContent=ch.title;
+  $('resultChapter').textContent=`#${String(ch.id).padStart(2,'0')} ${ch.title}`;
   $('resultTitle').textContent='結果';
   $('resultScore').textContent=`正解 ${ok} / ${total}　正答率 ${rate}%`;
   $('resultStars').textContent=rank.stars;
@@ -504,8 +539,53 @@ function showResult(ch){
   $('resultComment').textContent=rank.comment;
   $('resultOverlay').classList.add('show');
   $('resultOverlay').setAttribute('aria-hidden','false');
+  if(resultAutoTimer) clearTimeout(resultAutoTimer);
+  resultAutoTimer = setTimeout(()=>{ closeResult(); openCheckList(ch); }, 1800);
 }
-function closeResult(){ $('resultOverlay').classList.remove('show'); $('resultOverlay').setAttribute('aria-hidden','true'); }
+function closeResult(){
+  if(resultAutoTimer){ clearTimeout(resultAutoTimer); resultAutoTimer=null; }
+  $('resultOverlay').classList.remove('show');
+  $('resultOverlay').setAttribute('aria-hidden','true');
+}
+function makeCheckItem(i){
+  const q=QUESTIONS[i];
+  const ch=chapterLabelForIndex(i);
+  return `<div class="checkItem">
+    <div class="checkMeta"><span class="checkChapterNo">#${ch.num}</span><span class="checkChapterName">${escapeHtml(ch.title)}</span></div>
+    <div class="checkQuestion">${escapeHtml(q.question)}</div>
+    <div class="checkProblemId">${q.id}</div>
+  </div>`;
+}
+function openCheckList(ch){
+  const indices=[];
+  for(let i=ch.startIndex;i<=ch.endIndex;i++){
+    if(sessionResults[QUESTIONS[i].id]==='ng') indices.push(i);
+  }
+  $('checkTitle').textContent='要チェック問題';
+  $('checkSub').textContent = indices.length ? `#${String(ch.id).padStart(2,'0')} ${ch.title}　${indices.length}問` : `#${String(ch.id).padStart(2,'0')} ${ch.title}　要チェックなし`;
+  const list=$('checkList');
+  if(!indices.length){
+    list.className='checkList';
+    list.innerHTML=`<div class="checkEmpty">要チェック問題はありません</div>${checkFooterHtml(ch)}`;
+  } else {
+    list.className='checkList';
+    list.innerHTML=indices.map(i=>makeCheckItem(i)).join('') + checkFooterHtml(ch);
+  }
+  $('checkOverlay').classList.add('show');
+  $('checkOverlay').setAttribute('aria-hidden','false');
+}
+function closeCheckList(){ $('checkOverlay').classList.remove('show'); $('checkOverlay').setAttribute('aria-hidden','true'); }
+function checkFooterHtml(ch){
+  const nextId = ch.id < CHAPTERS.length ? ch.id + 1 : 1;
+  return `<div class="checkFooter">
+    <div class="checkFooterTitle">次はどうする？</div>
+    <div class="checkFooterBtns">
+      <button type="button" class="checkAction primary" data-check-action="retry">もう一度挑戦</button>
+      <button type="button" class="checkAction" data-check-action="next">次のチャプター</button>
+      <button type="button" class="checkAction" data-check-action="menu">チャプター選択</button>
+    </div>
+  </div>`;
+}
 
 function next(){
   if(browseMode){
@@ -680,6 +760,19 @@ $('browserCloseBtn').addEventListener('click',(e)=>{ e.preventDefault(); e.stopP
 $('browseBackBtn').addEventListener('click',()=>{ openProblemBrowser(browseTitle || '問題一覧', browseIndices, browseSub); });
 $('browserOverlay').addEventListener('click',(e)=>{ if(e.target.id==='browserOverlay') closeProblemBrowser(); });
 $('problemList').addEventListener('click',(e)=>{ const btn=e.target.closest('.problemItem'); if(btn) openQuestionFromBrowser(Number(btn.dataset.index)); });
+
+
+$('checkToMenuTopBtn').addEventListener('click',()=>{ closeCheckList(); resetSession(); openChapterMenu(); });
+$('checkList').addEventListener('click',(e)=>{
+  const btn=e.target.closest('[data-check-action]');
+  if(!btn) return;
+  const action=btn.dataset.checkAction;
+  const ch=activeCh();
+  closeCheckList();
+  if(action==='retry'){ resetSession(); current=ch.startIndex; showingAnswer=false; previewingQuestion=false; render({speak:true}); }
+  else if(action==='next'){ const nextIndex = (activeChapter + 1) % CHAPTERS.length; selectChapter(nextIndex); }
+  else { resetSession(); current=ch.startIndex; showingAnswer=false; previewingQuestion=false; render(); openChapterMenu(); }
+});
 
 $('startStudyBtn').addEventListener('click',()=>{
   $('splashOverlay').classList.add('hide');
