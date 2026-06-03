@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="歴史一問一答">
-<title>歴史733 浅瀬 Ver2.7</title>
+<title>歴史733 浅瀬 Ver2.7.1</title>
 <style>
 :root {
   --accent:#d32f50;
@@ -157,7 +157,7 @@ body.browseMode #menuBtn{display:none;}
 .confirmBtns{display:flex;gap:14px;justify-content:center;}
 .confirmBtn{border:1px solid var(--line);background:#fff;border-radius:18px;min-width:150px;height:54px;font-size:16px;font-weight:950;color:#5d5650;}
 .confirmBtn.primary{border:0;background:var(--accent);color:#fff;box-shadow:0 8px 18px rgba(211,47,80,.18);}
-.resultOverlay{position:fixed;inset:0;background:rgba(245,242,236,.96);backdrop-filter:blur(10px);z-index:135;display:none;align-items:center;justify-content:center;padding:24px;}
+.resultOverlay{position:fixed;inset:0;background:rgba(245,242,236,.96);backdrop-filter:blur(10px);z-index:135;display:none;align-items:center;justify-content:center;padding:24px;pointer-events:auto;}
 .resultOverlay.show{display:flex;}
 .resultBox{width:min(620px,92vw);background:var(--card);border:1px solid var(--line);border-radius:30px;box-shadow:var(--shadow);padding:28px 32px;text-align:center;}
 .resultChapter{font-size:18px;font-weight:950;color:var(--accent);letter-spacing:.05em;margin-bottom:6px;}
@@ -165,7 +165,8 @@ body.browseMode #menuBtn{display:none;}
 .resultScore{font-size:24px;font-weight:950;color:#2d2925;margin-bottom:8px;}
 .resultStars{font-size:34px;letter-spacing:.08em;font-weight:950;margin:8px 0 4px;}
 .resultMedal{display:inline-block;border-radius:999px;padding:7px 18px;font-size:16px;font-weight:950;margin:6px 0 12px;border:1px solid transparent;}
-.resultComment{font-size:18px;font-weight:900;line-height:1.55;color:#4f4841;margin:10px auto 22px;min-height:1.5em;}
+.resultComment{font-size:18px;font-weight:900;line-height:1.55;color:#4f4841;margin:10px auto 16px;min-height:1.5em;}
+.resultAutoNote{display:inline-block;border:1px solid #dbe6ef;background:#f2f7fa;color:var(--navy);border-radius:999px;padding:8px 18px;font-size:15px;font-weight:950;}
 .resultBtns{display:flex;gap:14px;justify-content:center;}
 .resultBtn{border:1px solid var(--line);background:#fff;border-radius:18px;min-width:150px;height:54px;font-size:16px;font-weight:950;color:#5d5650;}
 .resultBtn.primary{border:0;background:var(--accent);color:#fff;box-shadow:0 8px 18px rgba(211,47,80,.18);}
@@ -297,11 +298,7 @@ body.browseMode #menuBtn{display:none;}
     <div id="resultStars" class="resultStars">★★★☆☆</div>
     <div id="resultMedal" class="resultMedal">ブロンズ</div>
     <div id="resultComment" class="resultComment">がんばったね</div>
-    <div class="resultBtns">
-      <button id="goCheckBtn" class="resultBtn primary">要チェックへ</button>
-      <button id="retryChapterBtn" class="resultBtn">もう一回</button>
-      <button id="resultMenuBtn" class="resultBtn">チャプター選択</button>
-    </div>
+    <div id="resultAutoNote" class="resultAutoNote">要チェック問題へ進みます</div>
   </div>
 </div>
 
@@ -542,7 +539,7 @@ function showResult(ch){
   $('resultOverlay').setAttribute('aria-hidden','false');
   pendingResultChapterId=ch.id;
   if(resultAutoTimer) clearTimeout(resultAutoTimer);
-  resultAutoTimer = setTimeout(()=>{ goToCheckList(); }, 1600);
+  resultAutoTimer = window.setTimeout(()=>{ goToCheckList(); }, 1200);
 }
 function closeResult(){
   if(resultAutoTimer){ clearTimeout(resultAutoTimer); resultAutoTimer=null; }
@@ -746,22 +743,6 @@ function endPreview(e){ if(!showingAnswer)return; previewingQuestion=false; rend
 hold.addEventListener('touchstart',startPreview,{passive:false}); hold.addEventListener('touchend',endPreview,{passive:false}); hold.addEventListener('touchcancel',endPreview,{passive:false});
 hold.addEventListener('mousedown',startPreview); window.addEventListener('mouseup',()=>{ if(previewingQuestion) endPreview(new Event('mouseup')); });
 window.addEventListener('resize',()=>requestAnimationFrame(fitText));
-
-$('goCheckBtn').addEventListener('click',()=>{ goToCheckList(); });
-$('retryChapterBtn').addEventListener('click',()=>{
-  const ch=activeCh();
-  closeResult();
-  browseMode=false;
-  resetSession();
-  current=ch.startIndex; showingAnswer=false; previewingQuestion=false; render({speak:true});
-});
-$('resultMenuBtn').addEventListener('click',()=>{
-  closeResult();
-  const ch=activeCh();
-  resetSession();
-  current=ch.startIndex; showingAnswer=false; previewingQuestion=false; render();
-  openChapterMenu();
-});
 
 $('keywordInput').addEventListener('keydown',(e)=>{ if(e.key==='Enter') keywordSearch(); });
 $('yearSearchBtn').addEventListener('click',yearSearch);
