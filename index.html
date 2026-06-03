@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="歴史一問一答">
-<title>歴史733 浅瀬 Ver2.7.2</title>
+<title>歴史733 Ver 2.7.3</title>
 <style>
 :root {
   --accent:#d32f50;
@@ -157,7 +157,7 @@ body.browseMode #menuBtn{display:none;}
 .confirmBtns{display:flex;gap:14px;justify-content:center;}
 .confirmBtn{border:1px solid var(--line);background:#fff;border-radius:18px;min-width:150px;height:54px;font-size:16px;font-weight:950;color:#5d5650;}
 .confirmBtn.primary{border:0;background:var(--accent);color:#fff;box-shadow:0 8px 18px rgba(211,47,80,.18);}
-.resultOverlay{position:fixed;inset:0;background:rgba(245,242,236,.96);backdrop-filter:blur(10px);z-index:135;display:none;align-items:center;justify-content:center;padding:24px;pointer-events:none;}
+.resultOverlay{position:fixed;inset:0;background:rgba(245,242,236,.96);backdrop-filter:blur(10px);z-index:135;display:none;align-items:center;justify-content:center;padding:24px;pointer-events:auto;}
 .resultOverlay.show{display:flex;}
 .resultBox{width:min(620px,92vw);background:var(--card);border:1px solid var(--line);border-radius:30px;box-shadow:var(--shadow);padding:28px 32px;text-align:center;}
 .resultChapter{font-size:18px;font-weight:950;color:var(--accent);letter-spacing:.05em;margin-bottom:6px;}
@@ -220,7 +220,7 @@ body.browseMode #menuBtn{display:none;}
     <div class="splashTitle">歴史<span class="num">733</span></div>
     <div class="splashCopy">今日も少し進めよう</div>
     <button id="startStudyBtn" class="startStudyBtn">学習を始める</button>
-    <div class="splashFoot">タップしてチャプターを選択</div>
+    <div class="splashFoot">Ver 2.7.3</div>
   </div>
 </div>
 
@@ -360,6 +360,9 @@ let browseMode = false;
 let browseIndices = [];
 let browseTitle = "確認モード";
 let suppressChapterClick = false;
+let resultAutoTimer = null;
+let pendingResultChapterId = null;
+let currentCheckChapterId = null;
 
 function findChapterIndexByQuestion(index){ return CHAPTERS.findIndex(ch => index>=ch.startIndex && index<=ch.endIndex); }
 function activeCh(){ return CHAPTERS[activeChapter]; }
@@ -535,37 +538,33 @@ function showResult(ch){
   $('resultStars').textContent=rank.stars;
   $('resultMedal').textContent=rank.medal;
   $('resultComment').textContent=rank.comment;
-  $('resultOverlay').classList.add('show');
-  $('resultOverlay').setAttribute('aria-hidden','false');
   pendingResultChapterId=ch.id;
+  const overlay=$('resultOverlay');
+  overlay.classList.add('show');
+  overlay.setAttribute('aria-hidden','false');
   if(resultAutoTimer) clearTimeout(resultAutoTimer);
-  // 結果画面は終点にしない。必ず要チェック問題へ進める。
-  resultAutoTimer = window.setTimeout(()=>{
-    try { goToCheckList(); }
-    catch(err){
-      console.error('auto check transition failed', err);
-      const fallback = CHAPTERS.find(c=>c.id===pendingResultChapterId) || ch;
-      forceOpenCheckList(fallback);
-    }
-  }, 1000);
+
+  // 結果画面は「終点」ではなく、短い中継画面。Safariでも止まらないよう遷移を一箇所に集約。
+  resultAutoTimer = window.setTimeout(transitionResultToCheckList, 1200);
 }
-function closeResult(){
+function transitionResultToCheckList(){
   if(resultAutoTimer){ clearTimeout(resultAutoTimer); resultAutoTimer=null; }
+  const ch = CHAPTERS.find(c=>c.id===pendingResultChapterId) || activeCh();
   hideResultOverlay();
+  window.requestAnimationFrame(()=>openCheckList(ch));
 }
+function closeResult(){ transitionResultToCheckList(); }
 function hideResultOverlay(){
-  $('resultOverlay').classList.remove('show');
-  $('resultOverlay').setAttribute('aria-hidden','true');
+  const overlay=$('resultOverlay');
+  overlay.classList.remove('show');
+  overlay.setAttribute('aria-hidden','true');
 }
 function forceOpenCheckList(ch){
   if(resultAutoTimer){ clearTimeout(resultAutoTimer); resultAutoTimer=null; }
   hideResultOverlay();
-  openCheckList(ch);
+  window.requestAnimationFrame(()=>openCheckList(ch));
 }
-function goToCheckList(){
-  const ch = CHAPTERS.find(c=>c.id===pendingResultChapterId) || activeCh();
-  forceOpenCheckList(ch);
-}
+function goToCheckList(){ transitionResultToCheckList(); }
 function makeCheckItem(i){
   const q=QUESTIONS[i];
   const ch=chapterLabelForIndex(i);
@@ -768,6 +767,8 @@ $('problemList').addEventListener('click',(e)=>{ const btn=e.target.closest('.pr
 
 
 $('checkToMenuTopBtn').addEventListener('click',()=>{ closeCheckList(); resetSession(); openChapterMenu(); });
+
+$('resultOverlay').addEventListener('click',()=>{ transitionResultToCheckList(); });
 $('checkList').addEventListener('click',(e)=>{
   const btn=e.target.closest('[data-check-action]');
   if(!btn) return;
